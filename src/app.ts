@@ -1,6 +1,9 @@
-//const express = require('express');
 import express from 'express';
-import { version } from '../package.json';
+const { default: pkg } = await import('../package.json', {
+    with: {
+      type: "json",
+    },
+  });
 
 const app = express();
 
@@ -8,7 +11,7 @@ const app = express();
 app.get('/', (req, res) => {
     res.json({
         message: 'API is running',
-        version: version,
+        version: pkg.version,
         status: 'OK'
     });
 });

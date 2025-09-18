@@ -1,14 +1,16 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    "module": "ESNext", // Use ESNext module system (ES modules)
+    "module": "NodeNext", // Changed from 'ESNext'
     "target": "ESNext", // Compile to the latest ECMAScript version
-    "moduleResolution": "node", // Resolve modules using Node.js style
+    "moduleResolution": "NodeNext", // Changed from 'node'
     "esModuleInterop": true, // Enables interop between ES modules and CommonJS
     "allowSyntheticDefaultImports": true, // Allows default imports from modules with no default export
     "strict": true, // Enables strict type-checking
     "skipLibCheck": true, // Skip type-checking declaration files (faster builds)
     "resolveJsonModule": true, // Allows importing JSON files directly into TS modules
+    "noUnusedLocals": true, // Report errors for unused locally declared variables
+    "noUnusedParameters": true, // Report errors for unused
     "outDir": "./dist" // Specifies output directory for compiled files
   },
   "include": ["src/**/*"] // Include all files under the src directory

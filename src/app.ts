@@ -8,7 +8,7 @@ const { default: pkg } = await import('../package.json', {
 const app = express();
 
 // Default route + debug message
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
     res.json({
         message: 'API is running',
         version: pkg.version,

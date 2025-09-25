@@ -1,26 +1,42 @@
-name: CI Workflow
+name: CI Checks
 
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  ci:
+  prettier-check:
+    name: Formatting Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      
       - run: npm ci
 
-      - name: Formatting Check
-        run: npm run check-format
+      - run: npm run check-format
 
-      - name: Linting Check
-        run: npm run lint
+  eslint-check:
+    name: Linting Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm ci
 
-      - name: Type Check
-        run: npm run type-check
+      - run: npm run lint
+
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm ci
+
+      - run: npm run type-check

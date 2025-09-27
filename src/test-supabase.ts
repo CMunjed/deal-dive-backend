@@ -13,3 +13,5 @@ async function testConnection() {
 }
 
 testConnection();
+
+// NOTE: To run this, type `npx tsx src/test-supabase.ts`.

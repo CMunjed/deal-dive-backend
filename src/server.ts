@@ -1,7 +1,7 @@
 // Start the server and listen on the specified port for requests
 // Application entry point
 
-import 'dotenv/config';
+import "dotenv/config";
 
 import app from "./app.js";
 

@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { getDummyHandler } from '../controllers/dummy.controller.js';
+import { Router } from "express";
+import { getDummyHandler } from "../controllers/dummy.controller.js";
 
 const router = Router();
 

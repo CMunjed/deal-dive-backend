@@ -11,8 +11,9 @@
     "resolveJsonModule": true, // Allows importing JSON files directly into TS modules
     "noUnusedLocals": true, // Report errors for unused locally declared variables
     "noUnusedParameters": true, // Report errors for unused
-    "outDir": "./dist" // Specifies output directory for compiled files
+    "outDir": "./dist", // Specifies output directory for compiled files
+    "isolatedModules": true // Added for jest compat
   },
-  "include": ["src/**/*"], // Include all files under the src directory
+  "include": ["src/**/*", "tests/**/*"], // Include all files under the src directory
   "exclude": ["node_modules", "dist"]
 }

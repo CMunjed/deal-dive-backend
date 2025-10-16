@@ -14,3 +14,9 @@ export async function createDeal(
   if (error) throw error;
   return data;
 }
+
+export async function getDeal() {}
+
+export async function updateDeal() {}
+
+export async function deleteDeal() {}

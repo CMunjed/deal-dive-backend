@@ -14,6 +14,124 @@ export type Database = {
   }
   public: {
     Tables: {
+      comments: {
+        Row: {
+          content: string | null
+          created_at: string
+          deal_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deal_tags: {
+        Row: {
+          created_at: string
+          deal_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          deal_id?: string
+          tag_id?: string
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_tags_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deals: {
+        Row: {
+          comment_count: number | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discounted_price: number
+          downvotes: number | null
+          id: string
+          location_id: string | null
+          original_price: number | null
+          title: string
+          updated_at: string | null
+          upvotes: number | null
+        }
+        Insert: {
+          comment_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discounted_price: number
+          downvotes?: number | null
+          id?: string
+          location_id?: string | null
+          original_price?: number | null
+          title: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Update: {
+          comment_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discounted_price?: number
+          downvotes?: number | null
+          id?: string
+          location_id?: string | null
+          original_price?: number | null
+          title?: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deals_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dummy: {
         Row: {
           created_at: string
@@ -28,6 +146,77 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      locations: {
+        Row: {
+          created_at: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+        }
+        Relationships: []
+      }
+      tags: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          deal_id: string | null
+          id: string
+          user_id: string | null
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

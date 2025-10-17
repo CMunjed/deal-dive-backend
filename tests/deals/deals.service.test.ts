@@ -113,7 +113,7 @@ describe("getDeal service", () => {
     }
   });
 
-  it("Should fetch a deal by ID and return the correct object", async () => {
+  it("Should fetch a deal by ID and return it", async () => {
     const fetchedDeal = await getDeal(insertedDealId);
 
     expect(fetchedDeal).toBeDefined();

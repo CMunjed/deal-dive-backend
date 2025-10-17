@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase-client.js";
 import { DealInsert, Deal } from "../types/deals.types.js";
 
+// Create new deal
 export async function createDeal(
   userId: string,
   deal: Omit<DealInsert, "created_by">, // Accept a deal of DealInsert type, excluding user id
@@ -29,7 +30,35 @@ export async function getDeal(
   return data;
 }
 
-export async function getDeals() {}
+// Get multiple deals - Currently, either get all deals, or filter by user id
+export async function getDeals(userId?: string): Promise<Deal[]> {
+  let query = supabase.from("deals").select("*");
+
+  // If userId is provided, filter by it
+  if (userId) {
+    query = query.eq("created_by", userId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+
+  return data || [];
+}
+
+/* Future implementation - getDeals with multiple filters
+export async function getDeals(filters?: { userId?: string; tag?: string; location?: string }): Promise<Deal[]> {
+  let query = supabase.from("deals").select("*");
+
+  if (filters?.userId) query = query.eq("created_by", filters.userId);
+  if (filters?.tag) query = query.contains("tags", [filters.tag]);
+  if (filters?.location) query = query.eq("location", filters.location);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+} 
+*/
 
 export async function updateDeal() {}
 

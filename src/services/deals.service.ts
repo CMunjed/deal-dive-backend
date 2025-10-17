@@ -9,13 +9,27 @@ export async function createDeal(
     .from("deals")
     .insert([{ ...deal, created_by: userId }])
     .select()
-    .single();
+    .single(); // return one object
 
   if (error) throw error;
   return data;
 }
 
-export async function getDeal() {}
+// Get one deal by ID
+export async function getDeal(
+  dealId: string
+): Promise<Deal> {
+  const { data, error } = await supabase
+    .from("deals")
+    .select("*")
+    .eq("id", dealId)
+    .single(); // return one object
+
+  if (error) throw new Error("Deal not found");
+  return data;
+}
+
+export async function getDeals() {}
 
 export async function updateDeal() {}
 

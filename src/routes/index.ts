@@ -2,6 +2,7 @@ import { Router } from "express";
 import dummyRoutes from "./dummy.routes.js";
 import dealsRoutes from "./deals.routes.js";
 import votesRoutes from "./votes.routes.js";
+import commentsRoutes from "./comments.routes.js";
 
 
 const router = Router();
@@ -10,5 +11,6 @@ const router = Router();
 router.use("/dummy", dummyRoutes);
 router.use("/deals", dealsRoutes);
 router.use("/deals", votesRoutes);
+router.use("/", commentsRoutes);
 
 export default router;

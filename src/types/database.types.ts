@@ -181,6 +181,13 @@ export type Database = {
             referencedRelation: "deals"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reports_reporter_id_fkey" 
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "users"  
+            referencedColumns: ["id"]
+          }
         ]
       }
       tags: {

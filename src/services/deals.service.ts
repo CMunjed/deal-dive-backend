@@ -13,13 +13,12 @@ export async function createDeal(
     .single(); // Return one object (the created deal)
 
   if (error) throw error;
+
   return data;
 }
 
 // Get one deal by ID
-export async function getDeal(
-  dealId: string
-): Promise<Deal> {
+export async function getDeal(dealId: string): Promise<Deal> {
   const { data, error } = await supabase
     .from("deals")
     .select("*")
@@ -27,6 +26,7 @@ export async function getDeal(
     .single(); // Return one object (the fetched deal)
 
   if (error) throw new Error("Deal not found");
+
   return data;
 }
 
@@ -59,9 +59,9 @@ export async function getDeals(filters?: { userId?: string; tag?: string; locati
 } 
 */
 
-export async function updateDeal( 
+export async function updateDeal(
   dealId: string,
-  updates: Partial<Deal>
+  updates: Partial<Deal>,
 ): Promise<Deal> {
   // TODO: Either add a manual check or RLS to only allow users to update their own deals
   const { data, error } = await supabase

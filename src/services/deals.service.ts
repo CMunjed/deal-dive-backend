@@ -10,7 +10,7 @@ export async function createDeal(
     .from("deals")
     .insert([{ ...deal, created_by: userId }])
     .select()
-    .single(); // Return one object
+    .single(); // Return one object (the created deal)
 
   if (error) throw error;
   return data;
@@ -24,13 +24,13 @@ export async function getDeal(
     .from("deals")
     .select("*")
     .eq("id", dealId)
-    .single(); // Return one object
+    .single(); // Return one object (the fetched deal)
 
   if (error) throw new Error("Deal not found");
   return data;
 }
 
-// Get multiple deals - Currently, either get all deals, or filter by user id
+// Get multiple deals - currently, either get all deals, or filter by user id
 export async function getDeals(userId?: string): Promise<Deal[]> {
   let query = supabase.from("deals").select("*");
 
@@ -43,7 +43,7 @@ export async function getDeals(userId?: string): Promise<Deal[]> {
 
   if (error) throw error;
 
-  return data || [];
+  return data ?? []; // Return all fetched matching deals
 }
 
 /* TODO - getDeals with multiple filters
@@ -59,6 +59,45 @@ export async function getDeals(filters?: { userId?: string; tag?: string; locati
 } 
 */
 
-export async function updateDeal() {}
+export async function updateDeal( 
+  dealId: string,
+  updates: Partial<Deal>
+): Promise<Deal> {
+  // TODO: Either add a manual check or RLS to only allow users to update their own deals
+  const { data, error } = await supabase
+    .from("deals")
+    .update(updates)
+    .eq("id", dealId)
+    .select()
+    .single(); // Return one object (the updated deal)
 
-export async function deleteDeal() {}
+  if (error) {
+    throw new Error(`Failed to update deal: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error("Deal not found");
+  }
+
+  return data;
+}
+
+export async function deleteDeal(dealId: string): Promise<Deal> {
+  // TODO: Either add a manual check or RLS to only allow users to delete their own deals
+  const { data, error } = await supabase
+    .from("deals")
+    .delete()
+    .eq("id", dealId)
+    .select()
+    .single(); // Return one object (the deleted deal)
+
+  if (error) {
+    throw new Error(`Failed to delete deal: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error("Deal not found");
+  }
+
+  return data;
+}

@@ -13,9 +13,9 @@ router.get("/:id", getDealController);
 router.get("/", getDealsController);
 
 // PUT /api/v1/deals
-router.put("/", updateDealController);
+router.put("/:id", updateDealController);
 
 // DELETE /api/v1/deals
-router.delete("/", deleteDealController);
+router.delete("/:id", deleteDealController);
 
 export default router;

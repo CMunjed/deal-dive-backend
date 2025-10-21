@@ -12,8 +12,146 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      comments: {
+        Row: {
+          content: string | null
+          created_at: string
+          deal_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deal_tags: {
+        Row: {
+          created_at: string
+          deal_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          deal_id?: string
+          tag_id?: string
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_tags_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deals: {
+        Row: {
+          address: string | null
+          comment_count: number | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discounted_price: number
+          downvotes: number | null
+          geom: unknown | null
+          id: string
+          original_price: number | null
+          title: string
+          updated_at: string | null
+          upvotes: number | null
+        }
+        Insert: {
+          address?: string | null
+          comment_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discounted_price: number
+          downvotes?: number | null
+          geom?: unknown | null
+          id?: string
+          original_price?: number | null
+          title: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Update: {
+          address?: string | null
+          comment_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discounted_price?: number
+          downvotes?: number | null
+          geom?: unknown | null
+          id?: string
+          original_price?: number | null
+          title?: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Relationships: []
+      }
       dummy: {
         Row: {
           created_at: string
@@ -29,12 +167,121 @@ export type Database = {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          created_at: string
+          deal_id: string
+          description: string | null
+          id: string
+          reason: string | null
+          reporter_id: string
+          reviewed_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          deal_id: string
+          description?: string | null
+          id?: string
+          reason?: string | null
+          reporter_id: string
+          reviewed_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string
+          description?: string | null
+          id?: string
+          reason?: string | null
+          reporter_id?: string
+          reviewed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          deal_id: string | null
+          id: string
+          user_id: string | null
+          vote_type: number | null
+        }
+        Insert: {
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+          vote_type?: number | null
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+          vote_type?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_nearby_deals: {
+        Args: { distance_m?: number; user_lat: number; user_lon: number }
+        Returns: {
+          address: string
+          comment_count: number
+          created_at: string
+          description: string
+          discounted_price: number
+          distance: number
+          downvotes: number
+          id: string
+          latitude: number
+          longitude: number
+          original_price: number
+          title: string
+          updated_at: string
+          upvotes: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
@@ -163,6 +410,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

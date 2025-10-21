@@ -3,6 +3,8 @@ import { cleanupDeal, createTestDeal } from "./deals.util.js";
 
 const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6"
 
+// TODO: Consider using beforeEach and afterEach for setup to better isolate tests
+
 describe("Deal Service Tests", () => {
   let tempDealId: string;
 
@@ -68,12 +70,12 @@ describe("Deal Service Tests", () => {
       expect(updatedDeal.updated_at).not.toBeNull();
     });
 
-    it("Throw an error when updating nonexistent deal", async () => {
+    it("Throw an error when updating a nonexistent deal", async () => {
       await expect(
         updateDeal("00000000-0000-0000-0000-000000000000", {
           title: "This should not update",
         })
-      ).rejects.toThrow("Failed to update deal");
+      ).rejects.toThrow("Deal not found");
     });
   });
 
@@ -99,7 +101,7 @@ describe("Deal Service Tests", () => {
     it("Throw an error when deleting a nonexistent deal", async () => {
       await expect(
         deleteDeal("00000000-0000-0000-0000-000000000000")
-      ).rejects.toThrow("Failed to delete deal");
+      ).rejects.toThrow("Deal not found");
     });
 
   });

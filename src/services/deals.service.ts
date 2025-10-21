@@ -69,10 +69,10 @@ export async function updateDeal(
     .update(updates)
     .eq("id", dealId)
     .select()
-    .single(); // Return one object (the updated deal)
+    .maybeSingle(); // Return one object (the updated deal)
 
   if (error) {
-    throw new Error(`Failed to update deal: ${error.message}`);
+    throw error;
   }
 
   if (!data) {
@@ -89,10 +89,10 @@ export async function deleteDeal(dealId: string): Promise<Deal> {
     .delete()
     .eq("id", dealId)
     .select()
-    .single(); // Return one object (the deleted deal)
+    .maybeSingle(); // Return one object (the deleted deal)
 
   if (error) {
-    throw new Error(`Failed to delete deal: ${error.message}`);
+    throw error;
   }
 
   if (!data) {

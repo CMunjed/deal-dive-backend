@@ -1,4 +1,4 @@
-import { createDeal, getDeal } from "../../src/services/deals.service.js";
+import { createDeal, getDeal, getDeals } from "../../src/services/deals.service.js";
 //import { supabase } from "../../src/config/supabase-client.js";
 import { cleanupDeal, createTestDeal } from "./deals.util.js";
 
@@ -46,15 +46,16 @@ describe("Deal Service Tests", () => {
   });
 
   // getDeals tests
-  /*describe("getDeals", () => {
-    it("should fetch all deals", async () => {
+  describe("getDeals", () => {
+    it("Fetch all deals", async () => {
       const deals = await getDeals();
       expect(deals.length).toBeGreaterThan(0);
     });
 
-    it("should filter deals by userId", async () => {
+    it("Filter deals by userId", async () => {
       const deals = await getDeals(TEST_USER_ID);
       expect(deals.every(d => d.created_by === TEST_USER_ID)).toBe(true);
-    });*/
-
+    });
   });
+
+});

@@ -81,56 +81,51 @@ export type Database = {
       }
       deals: {
         Row: {
+          address: string | null
           comment_count: number | null
           created_at: string
           created_by: string | null
           description: string | null
           discounted_price: number
           downvotes: number | null
+          geom: unknown | null
           id: string
-          location_id: string | null
           original_price: number | null
           title: string
           updated_at: string | null
           upvotes: number | null
         }
         Insert: {
+          address?: string | null
           comment_count?: number | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           discounted_price: number
           downvotes?: number | null
+          geom?: unknown | null
           id?: string
-          location_id?: string | null
           original_price?: number | null
           title: string
           updated_at?: string | null
           upvotes?: number | null
         }
         Update: {
+          address?: string | null
           comment_count?: number | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           discounted_price?: number
           downvotes?: number | null
+          geom?: unknown | null
           id?: string
-          location_id?: string | null
           original_price?: number | null
           title?: string
           updated_at?: string | null
           upvotes?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "deals_location_id_fkey"
-            columns: ["location_id"]
-            isOneToOne: false
-            referencedRelation: "locations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       dummy: {
         Row: {
@@ -147,26 +142,46 @@ export type Database = {
         }
         Relationships: []
       }
-      locations: {
+      reports: {
         Row: {
           created_at: string
+          deal_id: string
+          description: string | null
           id: string
-          latitude: number | null
-          longitude: number | null
+          reason: string | null
+          reporter_id: string
+          reviewed_at: string | null
+          status: string
         }
         Insert: {
           created_at?: string
+          deal_id: string
+          description?: string | null
           id?: string
-          latitude?: number | null
-          longitude?: number | null
+          reason?: string | null
+          reporter_id: string
+          reviewed_at?: string | null
+          status?: string
         }
         Update: {
           created_at?: string
+          deal_id?: string
+          description?: string | null
           id?: string
-          latitude?: number | null
-          longitude?: number | null
+          reason?: string | null
+          reporter_id?: string
+          reviewed_at?: string | null
+          status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "reports_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tags: {
         Row: {
@@ -192,21 +207,21 @@ export type Database = {
           deal_id: string | null
           id: string
           user_id: string | null
-          value: number | null
+          vote_type: number | null
         }
         Insert: {
           created_at?: string
           deal_id?: string | null
           id?: string
           user_id?: string | null
-          value?: number | null
+          vote_type?: number | null
         }
         Update: {
           created_at?: string
           deal_id?: string | null
           id?: string
           user_id?: string | null
-          value?: number | null
+          vote_type?: number | null
         }
         Relationships: [
           {
@@ -223,7 +238,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_nearby_deals: {
+        Args: { distance_m?: number; user_lat: number; user_lon: number }
+        Returns: {
+          address: string
+          comment_count: number
+          created_at: string
+          description: string
+          discounted_price: number
+          distance: number
+          downvotes: number
+          id: string
+          latitude: number
+          longitude: number
+          original_price: number
+          title: string
+          updated_at: string
+          upvotes: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

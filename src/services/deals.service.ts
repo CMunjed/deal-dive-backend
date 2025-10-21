@@ -4,13 +4,13 @@ import { DealInsert, Deal } from "../types/deals.types.js";
 // Create new deal
 export async function createDeal(
   userId: string,
-  deal: Omit<DealInsert, "created_by">, // Accept a deal of DealInsert type, excluding user id
+  deal: Omit<DealInsert, "created_by">, // Accept a deal of DealInsert type, excluding user id (passed in separately)
 ): Promise<Deal> {
   const { data, error } = await supabase
     .from("deals")
     .insert([{ ...deal, created_by: userId }])
     .select()
-    .single(); // return one object
+    .single(); // Return one object
 
   if (error) throw error;
   return data;
@@ -24,7 +24,7 @@ export async function getDeal(
     .from("deals")
     .select("*")
     .eq("id", dealId)
-    .single(); // return one object
+    .single(); // Return one object
 
   if (error) throw new Error("Deal not found");
   return data;
@@ -46,13 +46,12 @@ export async function getDeals(userId?: string): Promise<Deal[]> {
   return data || [];
 }
 
-/* Future implementation - getDeals with multiple filters
+/* TODO - getDeals with multiple filters
 export async function getDeals(filters?: { userId?: string; tag?: string; location?: string }): Promise<Deal[]> {
   let query = supabase.from("deals").select("*");
 
   if (filters?.userId) query = query.eq("created_by", filters.userId);
   if (filters?.tag) query = query.contains("tags", [filters.tag]);
-  if (filters?.location) query = query.eq("location", filters.location);
 
   const { data, error } = await query;
   if (error) throw error;

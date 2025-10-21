@@ -1,5 +1,7 @@
 import { supabase } from '../config/supabase-client.js';
 
+// Test the deals with npm run seed
+
 const dummyDeals = [
   {
     title: "Happy Hour at The Swamp",

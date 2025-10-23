@@ -5,7 +5,6 @@ import commentsRoutes from "./comments.routes.js";
 import reportsRoutes from "./reports.routes.js";
 import votesRoutes from "./votes.routes.js";
 
-
 const router = Router();
 
 // Mount routes

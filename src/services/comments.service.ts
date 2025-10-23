@@ -15,7 +15,7 @@ export type CommentResult = {
 export async function addComment(
   userId: string,
   dealId: string,
-  content: string
+  content: string,
 ): Promise<Comment> {
   const { data, error } = await supabase
     .from("comments")
@@ -28,7 +28,9 @@ export async function addComment(
 }
 
 // Get all comments for a specific deal
-export async function getCommentsByDeal(dealId: string): Promise<CommentResult> {
+export async function getCommentsByDeal(
+  dealId: string,
+): Promise<CommentResult> {
   const { data, error } = await supabase
     .from("comments")
     .select("*")
@@ -48,7 +50,7 @@ export async function getCommentsByDeal(dealId: string): Promise<CommentResult> 
 // Delete a comment by ID (only by the user who created it)
 export async function deleteComment(
   commentId: string,
-  userId: string
+  userId: string,
 ): Promise<void> {
   const { error } = await supabase
     .from("comments")

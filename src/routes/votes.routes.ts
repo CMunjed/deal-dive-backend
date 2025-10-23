@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { addVoteController, removeVoteController, getVotesController } from "../controllers/votes.controller.js";
+import {
+  addVoteController,
+  removeVoteController,
+  getVotesController,
+} from "../controllers/votes.controller.js";
 
 const router = Router();
 

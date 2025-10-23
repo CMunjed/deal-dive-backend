@@ -15,7 +15,7 @@ export type ReportResult = {
 export async function addReport(
   userId: string,
   dealId: string,
-  reason: string
+  reason: string,
 ): Promise<Report> {
   const { data, error } = await supabase
     .from("reports")
@@ -48,7 +48,7 @@ export async function getReportsByDeal(dealId: string): Promise<ReportResult> {
 // Delete a report by ID (only by the user who created it)
 export async function deleteReport(
   reportId: string,
-  userId: string
+  userId: string,
 ): Promise<void> {
   const { error } = await supabase
     .from("reports")

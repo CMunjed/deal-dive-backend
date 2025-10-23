@@ -8,7 +8,9 @@ export async function addVoteController(req: Request, res: Response) {
     const { userId, vote_type } = req.body;
 
     if (!userId || vote_type === undefined) {
-      return res.status(400).json({ error: "userId and vote_type are required" });
+      return res
+        .status(400)
+        .json({ error: "userId and vote_type are required" });
     }
 
     const vote = await addVote(userId, dealId, vote_type);
@@ -48,7 +50,7 @@ export async function getVotesController(req: Request, res: Response) {
   try {
     const { id: dealId } = req.params;
     const voteResult = await getVotes(dealId);
-    
+
     res.json({
       count: voteResult.totalCount,
       votes: voteResult.votes,

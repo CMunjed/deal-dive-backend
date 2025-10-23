@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { addReport, getReportsByDeal, deleteReport } from "../services/reports.service.js";
+import {
+  addReport,
+  getReportsByDeal,
+  deleteReport,
+} from "../services/reports.service.js";
 
 // POST /api/v1/deals/:id/reports
 export async function addReportController(req: Request, res: Response) {
@@ -27,7 +31,7 @@ export async function getReportsController(req: Request, res: Response) {
   try {
     const { id: dealId } = req.params;
     const reportResult = await getReportsByDeal(dealId);
-    
+
     res.json({
       count: reportResult.totalCount,
       reports: reportResult.reports,

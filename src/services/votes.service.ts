@@ -23,13 +23,13 @@ export type VoteResult = {
 export async function addVote(
   userId: string,
   dealId: string,
-  vote_type: number
+  vote_type: number,
 ): Promise<Vote> {
   const { data, error } = await supabase
     .from("votes")
     .upsert(
       { user_id: userId, deal_id: dealId, vote_type },
-      { onConflict: "user_id,deal_id" }
+      { onConflict: "user_id,deal_id" },
     )
     .select()
     .single();
@@ -41,7 +41,7 @@ export async function addVote(
 // Remove a user's vote on a deal
 export async function removeVote(
   userId: string,
-  dealId: string
+  dealId: string,
 ): Promise<void> {
   const { error } = await supabase
     .from("votes")
@@ -62,8 +62,12 @@ export async function getVotes(dealId: string): Promise<VoteResult> {
   if (error) throw new Error(`Failed to get votes: ${error.message}`);
 
   const votes = data || [];
-  const upvotes = votes.filter(vote => vote.vote_type === VOTE_TYPES.UPVOTE).length;
-  const downvotes = votes.filter(vote => vote.vote_type === VOTE_TYPES.DOWNVOTE).length;
+  const upvotes = votes.filter(
+    (vote) => vote.vote_type === VOTE_TYPES.UPVOTE,
+  ).length;
+  const downvotes = votes.filter(
+    (vote) => vote.vote_type === VOTE_TYPES.DOWNVOTE,
+  ).length;
 
   return {
     votes,

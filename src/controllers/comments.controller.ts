@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { addComment, getCommentsByDeal, deleteComment } from "../services/comments.service.js";
+import {
+  addComment,
+  getCommentsByDeal,
+  deleteComment,
+} from "../services/comments.service.js";
 
 // POST /api/v1/deals/:id/comments
 export async function addCommentController(req: Request, res: Response) {
@@ -27,7 +31,7 @@ export async function getCommentsController(req: Request, res: Response) {
   try {
     const { id: dealId } = req.params;
     const commentResult = await getCommentsByDeal(dealId);
-    
+
     res.json({
       count: commentResult.totalCount,
       comments: commentResult.comments,

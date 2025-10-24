@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import routes from "./routes/index.js";
 
 const { default: pkg } = await import("../package.json", {
@@ -8,6 +9,18 @@ const { default: pkg } = await import("../package.json", {
 });
 
 const app = express();
+
+// Configure CORS
+const allowedOrigins = process.env.CORS_ORIGINS?.split(",") || [
+  "http://localhost:3000",
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 

@@ -54,7 +54,7 @@ describe("Deal Service Tests", () => {
     });
 
     it("Filter deals by userId", async () => {
-      const deals = await getDeals(TEST_USER_ID);
+      const deals = await getDeals({createdBy: TEST_USER_ID});
       expect(deals.every(d => d.created_by === TEST_USER_ID)).toBe(true);
     });
   });

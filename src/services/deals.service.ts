@@ -31,7 +31,7 @@ export async function getDeal(dealId: string): Promise<Deal> {
 }
 
 // Get multiple deals - currently, either get all deals, or filter by user id
-export async function getDeals(userId?: string): Promise<Deal[]> {
+/*export async function getDeals(userId?: string): Promise<Deal[]> {
   let query = supabase.from("deals").select("*");
 
   // If userId is provided, filter by it
@@ -44,20 +44,32 @@ export async function getDeals(userId?: string): Promise<Deal[]> {
   if (error) throw error;
 
   return data ?? []; // Return all fetched matching deals
-}
+}*/
 
-/* TODO - getDeals with multiple filters
-export async function getDeals(filters?: { userId?: string; tag?: string; location?: string }): Promise<Deal[]> {
+type getDealsFilters = {
+  createdBy?: string;
+  tags?: string[];
+  categories?: string[];
+  geo?: { longitude: number; latitude: number; radius: number };
+};
+
+// Get multiple deals - allows filtering (see getDealsFilters)
+export async function getDeals(filters?: getDealsFilters): Promise<Deal[]> {
   let query = supabase.from("deals").select("*");
 
-  if (filters?.userId) query = query.eq("created_by", filters.userId);
-  if (filters?.tag) query = query.contains("tags", [filters.tag]);
-
+  if (filters) {
+    // If userId is provided, filter by it
+    if (filters.createdBy) {
+      query = query.eq("created_by", filters.createdBy);
+    }
+  }
+  
   const { data, error } = await query;
+
   if (error) throw error;
-  return data || [];
-} 
-*/
+
+  return data ?? []; // Return all fetched deals matching the filters
+}
 
 export async function updateDeal(
   dealId: string,

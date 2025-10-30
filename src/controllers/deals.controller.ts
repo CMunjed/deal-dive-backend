@@ -41,10 +41,52 @@ export async function getDealController(req: Request, res: Response) {
 }
 
 export async function getDealsController(req: Request, res: Response) {
-  // TODO: Modify this to accept more query parameters as added
   try {
-    const { userId } = req.query;
-    const deals = await getDeals(userId as string | undefined);
+    const { createdBy, tags, categories, longitude, latitude, radius } = req.query;
+
+    // Validate location parameters
+    const hasGeoParams = longitude && latitude && radius;
+    const missingGeoParams =
+      (longitude || latitude || radius) && !(longitude && latitude && radius);
+
+    if (missingGeoParams) {
+      return res.status(400).json({
+        error: "When providing location filters, longitude, latitude, and radius must all be specified.",
+      });
+    }
+
+    // Parse tags and categories
+    const parsedTags =
+      typeof tags === "string"
+        ? tags.split(",").map((t) => t.trim()).filter(Boolean)
+        : Array.isArray(tags) // If tags is an array, i.e. if request looks like: /api/v1/deals?tags=tag1&tags=tag2
+        ? (tags.map(String) as string[]) // THEN just use the array
+        : undefined; // Else, set to undefined
+
+    const parsedCategories =
+      typeof categories === "string"
+        ? categories.split(",").map((c) => c.trim()).filter(Boolean)
+        : Array.isArray(categories)
+        ? (categories.map(String) as string[])
+        : undefined;
+
+    // Normalize location parameters
+    const geoFilter = hasGeoParams
+      ? {
+          longitude: parseFloat(longitude as string),
+          latitude: parseFloat(latitude as string),
+          radius: parseFloat(radius as string),
+        }
+      : undefined;
+
+    // Pass parameters to service layer
+    const deals = await getDeals({
+      createdBy: createdBy as string | undefined,
+      tags: parsedTags,
+      categories: parsedCategories,
+      geo: geoFilter,
+    });
+
     return res.status(200).json(deals);
   } catch (error: unknown) {
     return handleError(res, error);

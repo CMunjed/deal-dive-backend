@@ -1,7 +1,12 @@
-import { deleteDeal, getDeal, getDeals, updateDeal } from "../../src/services/deals.service.js";
+import {
+  deleteDeal,
+  getDeal,
+  getDeals,
+  updateDeal,
+} from "../../src/services/deals.service.js";
 import { cleanupDeal, createTestDeal } from "./deals.util.js";
 
-const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6"
+const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6";
 
 // TODO: Consider using beforeEach and afterEach for setup to better isolate tests
 
@@ -28,7 +33,7 @@ describe("Deal Service Tests", () => {
 
       expect(deal).toHaveProperty("id");
       expect(deal.title).toBe("Test Deal");
-      
+
       // Clean up deal
       await cleanupDeal(deal.id);
     });
@@ -42,7 +47,9 @@ describe("Deal Service Tests", () => {
     });
 
     it("Throw an error when fetching a nonexistent deal", async () => {
-      await expect(getDeal("00000000-0000-0000-0000-000000000000")).rejects.toThrow("Deal not found");
+      await expect(
+        getDeal("00000000-0000-0000-0000-000000000000"),
+      ).rejects.toThrow("Deal not found");
     });
   });
 
@@ -55,7 +62,7 @@ describe("Deal Service Tests", () => {
 
     it("Filter deals by userId", async () => {
       const deals = await getDeals(TEST_USER_ID);
-      expect(deals.every(d => d.created_by === TEST_USER_ID)).toBe(true);
+      expect(deals.every((d) => d.created_by === TEST_USER_ID)).toBe(true);
     });
   });
 
@@ -74,7 +81,7 @@ describe("Deal Service Tests", () => {
       await expect(
         updateDeal("00000000-0000-0000-0000-000000000000", {
           title: "This should not update",
-        })
+        }),
       ).rejects.toThrow("Deal not found");
     });
   });
@@ -100,10 +107,8 @@ describe("Deal Service Tests", () => {
 
     it("Throw an error when deleting a nonexistent deal", async () => {
       await expect(
-        deleteDeal("00000000-0000-0000-0000-000000000000")
+        deleteDeal("00000000-0000-0000-0000-000000000000"),
       ).rejects.toThrow("Deal not found");
     });
-
   });
-
 });

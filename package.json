@@ -6,9 +6,9 @@
     "start": "npx tsx src/server.ts",
     "dev": "npx tsx --watch src/server.ts",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-    "format": "prettier --write src/",
-    "check-format": "prettier --check src/",
-    "lint": "eslint src/",
+    "format": "prettier --write src/ tests/",
+    "check-format": "prettier --check src/ tests/",
+    "lint": "eslint src/ tests/",
     "type-check": "tsc --noEmit --project tsconfig.json"
   },
   "repository": {

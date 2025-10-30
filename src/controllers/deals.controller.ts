@@ -21,8 +21,7 @@ const handleError = (res: Response, error: unknown) => {
 
 export async function createDealController(req: Request, res: Response) {
   try {
-    const userId = req.body.userId; // TODO: Get this from auth middleware instead of the request body
-    const dealData = req.body;
+    const { userId, ...dealData } = req.body; // TODO: Get user ID from auth middleware instead of the request body
     const deal = await createDeal(userId, dealData);
     return res.status(201).json(deal);
   } catch (error: unknown) {

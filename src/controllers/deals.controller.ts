@@ -58,16 +58,16 @@ export async function getDealsController(req: Request, res: Response) {
     // Parse tags and categories
     const parsedTags =
       typeof tags === "string"
-        ? tags.split(",").map((t) => t.trim()).filter(Boolean)
+        ? tags.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean)
         : Array.isArray(tags) // If tags is an array, i.e. if request looks like: /api/v1/deals?tags=tag1&tags=tag2
-        ? (tags.map(String) as string[]) // THEN just use the array
+        ? (tags.map((t) => String(t).toLowerCase()) as string[]) // THEN just use the array
         : undefined; // Else, set to undefined
 
     const parsedCategories =
       typeof categories === "string"
-        ? categories.split(",").map((c) => c.trim()).filter(Boolean)
+        ? categories.split(",").map((c) => c.trim().toLowerCase()).filter(Boolean)
         : Array.isArray(categories)
-        ? (categories.map(String) as string[])
+        ? (categories.map((c) => String(c).toLowerCase()) as string[])
         : undefined;
 
     // Normalize location parameters

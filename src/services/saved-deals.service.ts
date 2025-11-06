@@ -1,9 +1,17 @@
 import { supabase } from "../config/supabase-client.js";
-// import { authMiddleware } from "../middleware/auth-middleware.js";
-// import { Saved } from "../types/saved.types.js";
+import { SavedDeal } from "../types/saved-deals.types.js";
 
 // Save a deal
-export async function saveDeal(userId: string, dealId: string): Promise<null> { return null; }
+export async function saveDeal(userId: string, dealId: string): Promise<SavedDeal> {
+  const { data, error } = await supabase
+    .from("saved_deals")
+    .insert([{ user_id: userId, deal_id: dealId }])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
 
 // Get all the user's saved deals
 // export async function getSavedDeals(userId: string): Promise<null> { return null; }

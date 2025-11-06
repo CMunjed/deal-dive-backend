@@ -9,20 +9,25 @@ export async function saveDeal(userId: string, dealId: string): Promise<SavedDea
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) throw new Error(error.message);
   return data;
 }
 
 // Get all the user's saved deals
 // export async function getSavedDeals(userId: string): Promise<null> { return null; }
 
-// Remove a saved deal
-export async function unsaveDeal(userId: string, dealId: string): Promise<void> {
-  const { error } = await supabase
+// Remove a saved deal - Currently returns the deleted row instead of empty response
+export async function unsaveDeal(userId: string, dealId: string): Promise<SavedDeal> {
+  const { data, error } = await supabase
     .from("saved_deals")
     .delete()
     .eq("user_id", userId)
-    .eq("deal_id", dealId);
+    .eq("deal_id", dealId)
+    .select()
+    .maybeSingle(); // Return the deleted row
 
   if (error) throw error;
+  if (!data) throw new Error("Saved deal not found");
+
+  return data;
 }

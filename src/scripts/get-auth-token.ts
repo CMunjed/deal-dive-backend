@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { supabase } from "./config/supabase-client.js";
+import { supabase } from "../config/supabase-client.js";
 
 async function getToken() {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -18,4 +18,4 @@ async function getToken() {
 
 getToken();
 
-// npx tsx src/get-auth-token.ts
+// NOTE: To run this, fill in email and password and type `npx tsx src/scripts/get-auth-token.ts`.

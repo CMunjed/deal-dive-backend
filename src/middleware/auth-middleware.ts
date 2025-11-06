@@ -1,11 +1,17 @@
 import type { Request, Response, NextFunction } from "express";
 import { supabase } from "../config/supabase-client.js";
 
-export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+export async function authMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Missing or invalid authorization header" });
+      return res
+        .status(401)
+        .json({ error: "Missing or invalid authorization header" });
     }
 
     const token = authHeader.split(" ")[1];

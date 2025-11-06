@@ -17,4 +17,12 @@ export async function saveDeal(userId: string, dealId: string): Promise<SavedDea
 // export async function getSavedDeals(userId: string): Promise<null> { return null; }
 
 // Remove a saved deal
-export async function unsaveDeal(userId: string, dealId: string): Promise<null> { return null; }
+export async function unsaveDeal(userId: string, dealId: string): Promise<void> {
+  const { error } = await supabase
+    .from("saved_deals")
+    .delete()
+    .eq("user_id", userId)
+    .eq("deal_id", dealId);
+
+  if (error) throw error;
+}

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import {
   saveDeal,
-  getSavedDeals,
+  // getSavedDeals,
   unsaveDeal
-} from "../services/saved.service.js";
+} from "../services/saved-deals.service.js";
     
-// POST /saved/:dealId
+// POST /api/v1/deals/:id/save
 export async function saveDealController(req: Request, res: Response) {
   //try {
     // const userId = req.user.id; // get user.id from auth middleware
@@ -18,7 +18,7 @@ export async function saveDealController(req: Request, res: Response) {
 }
 
 // GET /saved
-export async function getSavedDealsController(req: Request, res: Response) {
+// export async function getSavedDealsController(req: Request, res: Response) {
   //try {
   //  const userId = req.user.id;
   //  const deals = await getSavedDeals(userId);
@@ -26,9 +26,9 @@ export async function getSavedDealsController(req: Request, res: Response) {
   //} catch (error: unknown) {
   //  return handleError(res, error);
   //}
-}
+// }
 
-// DELETE /saved/:dealId
+// DELETE /api/v1/deals/:id/save
 export async function unsaveDealController(req: Request, res: Response) {
   //try {
   //  const userId = req.user.id;

@@ -21,7 +21,10 @@ const handleError = (res: Response, error: unknown) => {
 
 export async function createDealController(req: Request, res: Response) {
   try {
-    const userId = (req as any).user.id; // TODO: Don't cast this as any
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized: No user ID found" });
+    }
     const dealData = req.body;
     const deal = await createDeal(userId, dealData);
     return res.status(201).json(deal);

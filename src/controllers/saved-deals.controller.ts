@@ -7,14 +7,17 @@ import {
     
 // POST /api/v1/deals/:id/save
 export async function saveDealController(req: Request, res: Response) {
-  //try {
-    // const userId = req.user.id; // get user.id from auth middleware
-    //const { dealId } = req.params;
-    //const saved = await saveDeal(userId, dealId);
-    //return res.status(201).json(saved);
-  //} catch (error: unknown) {
-  //  return handleError(res, error);
-  //}
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized: No user ID found" });
+    }
+    const dealId = req.params.id;
+    const saved = await saveDeal(userId, dealId);
+    return res.status(201).json(saved);
+  } catch (error: unknown) {
+    return res.status(500).json({ error: "Error" }); // Placeholder error
+  }
 }
 
 // GET /saved

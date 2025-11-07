@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   saveDealController,
   getSavedDealsController,
-  unsaveDealController
+  unsaveDealController,
 } from "../controllers/saved-deals.controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 

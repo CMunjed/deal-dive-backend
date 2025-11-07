@@ -1,4 +1,8 @@
-import { getSavedDeals, saveDeal, unsaveDeal } from "../../src/services/saved-deals.service.js";
+import {
+  getSavedDeals,
+  saveDeal,
+  unsaveDeal,
+} from "../../src/services/saved-deals.service.js";
 import { createTestDeal, cleanupDeal } from "./deals.util.js";
 
 const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6";
@@ -9,10 +13,14 @@ describe("Saved Deals Service Tests", () => {
 
   // Create a temporary deal before all tests
   beforeAll(async () => {
-    const deal = await createTestDeal(TEST_USER_ID, { title: "Temp Deal (to test saving deals)" });
+    const deal = await createTestDeal(TEST_USER_ID, {
+      title: "Temp Deal (to test saving deals)",
+    });
     tempDealId = deal.id;
 
-    const otherDeal = await createTestDeal(TEST_USER_ID, { title: "Other User Deal" });
+    const otherDeal = await createTestDeal(TEST_USER_ID, {
+      title: "Other User Deal",
+    });
     otherTempDealId = otherDeal.id;
   });
 
@@ -20,7 +28,6 @@ describe("Saved Deals Service Tests", () => {
   afterAll(async () => {
     if (tempDealId) await cleanupDeal(tempDealId);
   });
-
 
   describe("saveDeal", () => {
     it("Should save a deal for the user", async () => {
@@ -38,7 +45,6 @@ describe("Saved Deals Service Tests", () => {
     });
   });
 
-
   describe("unsaveDeal", () => {
     it("Should unsave a deal previously saved", async () => {
       const deleted = await unsaveDeal(TEST_USER_ID, tempDealId);
@@ -51,10 +57,11 @@ describe("Saved Deals Service Tests", () => {
     });
 
     it("Should throw an error when unsaving a deal that is not saved", async () => {
-      await expect(unsaveDeal(TEST_USER_ID, tempDealId)).rejects.toThrow("Saved deal not found");
+      await expect(unsaveDeal(TEST_USER_ID, tempDealId)).rejects.toThrow(
+        "Saved deal not found",
+      );
     });
   });
-
 
   describe("getSavedDeals", () => {
     beforeAll(async () => {
@@ -73,14 +80,17 @@ describe("Saved Deals Service Tests", () => {
       const savedDeals = await getSavedDeals(TEST_USER_ID);
       expect(savedDeals.length).toBeGreaterThan(0);
       // Ensure our test deals are included
-      const savedIds = savedDeals.map(d => d.id);
-      expect(savedIds).toEqual(expect.arrayContaining([tempDealId, otherTempDealId]));
+      const savedIds = savedDeals.map((d) => d.id);
+      expect(savedIds).toEqual(
+        expect.arrayContaining([tempDealId, otherTempDealId]),
+      );
     });
 
     it("Should return an empty array for a user with no saved deals", async () => {
-      const savedDeals = await getSavedDeals("00000000-0000-0000-0000-000000000000");
+      const savedDeals = await getSavedDeals(
+        "00000000-0000-0000-0000-000000000000",
+      );
       expect(savedDeals).toEqual([]);
     });
   });
-
 });

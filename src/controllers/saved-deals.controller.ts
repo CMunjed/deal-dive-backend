@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
   saveDeal,
-  // getSavedDeals,
+  getSavedDeals,
   unsaveDeal
 } from "../services/saved-deals.service.js";
     
@@ -16,20 +16,23 @@ export async function saveDealController(req: Request, res: Response) {
     const saved = await saveDeal(userId, dealId);
     return res.status(201).json(saved);
   } catch (error: unknown) {
-    return res.status(500).json({ error: "Error" }); // Placeholder error
+    return res.status(500).json({ error: "Error placeholder" }); // Placeholder error
   }
 }
 
-// GET /saved
-// export async function getSavedDealsController(req: Request, res: Response) {
-  //try {
-  //  const userId = req.user.id;
-  //  const deals = await getSavedDeals(userId);
-  //  return res.status(200).json(deals);
-  //} catch (error: unknown) {
-  //  return handleError(res, error);
-  //}
-// }
+// GET /api/v1/deals/saved
+export async function getSavedDealsController(req: Request, res: Response) {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized: No user ID found" });
+    }
+    const deals = await getSavedDeals(userId);
+    return res.status(200).json(deals);
+  } catch (error: unknown) {
+    return res.status(500).json({ error: "Error placeholder" }); // Placeholder error
+  }
+}
 
 // DELETE /api/v1/deals/:id/save
 export async function unsaveDealController(req: Request, res: Response) {
@@ -46,6 +49,6 @@ export async function unsaveDealController(req: Request, res: Response) {
     const deleted = await unsaveDeal(userId, dealId);
     return res.status(200).json(deleted);
   } catch (error: unknown) {
-    return res.status(500).json({ error: "Error" }); // Placeholder error
+    return res.status(500).json({ error: "Error placeholder" }); // Placeholder error
   }
 }

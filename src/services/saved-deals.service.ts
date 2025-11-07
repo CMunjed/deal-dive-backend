@@ -26,7 +26,7 @@ export async function unsaveDeal(userId: string, dealId: string): Promise<SavedD
     .select()
     .maybeSingle(); // Return the deleted row
 
-  if (error) throw error;
+  if (error) throw new Error(error.message);
   if (!data) throw new Error("Saved deal not found");
 
   return data;

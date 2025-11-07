@@ -17,6 +17,7 @@ describe("Saved Deals Service Tests", () => {
     if (tempDealId) await cleanupDeal(tempDealId);
   });
 
+
   describe("saveDeal", () => {
     it("Should save a deal for the user", async () => {
       const saved = await saveDeal(TEST_USER_ID, tempDealId);
@@ -33,6 +34,7 @@ describe("Saved Deals Service Tests", () => {
     });
   });
 
+  
   describe("unsaveDeal", () => {
     it("Should unsave a deal previously saved", async () => {
       const deleted = await unsaveDeal(TEST_USER_ID, tempDealId);

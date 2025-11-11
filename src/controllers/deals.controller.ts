@@ -21,7 +21,10 @@ const handleError = (res: Response, error: unknown) => {
 
 export async function createDealController(req: Request, res: Response) {
   try {
-    const userId = req.body.userId; // TODO: Get this from auth middleware instead of the request body
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized: No user ID found" });
+    }
     const dealData = req.body;
     const deal = await createDeal(userId, dealData);
     return res.status(201).json(deal);

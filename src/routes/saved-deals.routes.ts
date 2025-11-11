@@ -12,9 +12,9 @@ const router = Router();
 router.post("/:id/save", authMiddleware, saveDealController);
 
 // GET /api/v1/deals/saved - Get all a user's saved deals
-router.get("/saved", getSavedDealsController);
+router.get("/saved", authMiddleware, getSavedDealsController);
 
 // DELETE /api/v1/deals/:id/save - Unsave a deal
-router.delete("/:id/save", unsaveDealController);
+router.delete("/:id/save", authMiddleware, unsaveDealController);
 
 export default router;

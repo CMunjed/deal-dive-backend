@@ -10,8 +10,8 @@ const router = Router();
 
 // Mount routes
 router.use("/dummy", dummyRoutes);
-router.use("/deals", dealsRoutes);
 router.use("/deals", savedDealsRoutes);
+router.use("/deals", dealsRoutes);
 router.use("/", commentsRoutes);
 router.use("/", reportsRoutes);
 router.use("/deals", votesRoutes);

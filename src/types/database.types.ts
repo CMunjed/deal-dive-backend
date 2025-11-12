@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          name_lower: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          name_lower?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          name_lower?: string | null
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           content: string | null
@@ -39,6 +60,39 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "comments_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deal_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          deal_id: string
+        }
+        Insert: {
+          category_id?: string
+          created_at?: string
+          deal_id?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          deal_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_categories_deal_id_fkey"
             columns: ["deal_id"]
             isOneToOne: false
             referencedRelation: "deals"
@@ -88,8 +142,10 @@ export type Database = {
           description: string | null
           discounted_price: number
           downvotes: number | null
-          geom: unknown | null
+          geom: unknown
           id: string
+          latitude: number | null
+          longitude: number | null
           original_price: number | null
           title: string
           updated_at: string | null
@@ -103,8 +159,10 @@ export type Database = {
           description?: string | null
           discounted_price: number
           downvotes?: number | null
-          geom?: unknown | null
+          geom?: unknown
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           original_price?: number | null
           title: string
           updated_at?: string | null
@@ -118,8 +176,10 @@ export type Database = {
           description?: string | null
           discounted_price?: number
           downvotes?: number | null
-          geom?: unknown | null
+          geom?: unknown
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           original_price?: number | null
           title?: string
           updated_at?: string | null
@@ -139,6 +199,30 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+        }
+        Relationships: []
+      }
+      geo_deal_test: {
+        Row: {
+          geog: unknown
+          id: string
+          latitude: number | null
+          longitude: number | null
+          title: string | null
+        }
+        Insert: {
+          geog?: unknown
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          title?: string | null
+        }
+        Update: {
+          geog?: unknown
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          title?: string | null
         }
         Relationships: []
       }
@@ -181,30 +265,55 @@ export type Database = {
             referencedRelation: "deals"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      saved_deals: {
+        Row: {
+          created_at: string
+          deal_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "reports_reporter_id_fkey" 
-            columns: ["reporter_id"]
+            foreignKeyName: "saved_deals_deal_id_fkey"
+            columns: ["deal_id"]
             isOneToOne: false
-            referencedRelation: "users"  
+            referencedRelation: "deals"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       tags: {
         Row: {
           created_at: string | null
           id: string
-          name: string | null
+          name: string
+          name_lower: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
-          name?: string | null
+          name: string
+          name_lower?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          name?: string | null
+          name?: string
+          name_lower?: string | null
         }
         Relationships: []
       }

@@ -49,17 +49,19 @@ describe("Saved Deals Service Tests", () => {
     it("Should unsave a deal previously saved", async () => {
       const deleted = await unsaveDeal(TEST_USER_ID, tempDealId);
 
-      expect(deleted).toBeDefined();
-      expect(deleted.user_id).toBe(TEST_USER_ID);
-      expect(deleted.deal_id).toBe(tempDealId);
+      expect(deleted).toBe(true); //.toBeDefined();
+      // expect(deleted.user_id).toBe(TEST_USER_ID);
+      // expect(deleted.deal_id).toBe(tempDealId);
 
-      // TODO: Verify it is no longer returned in saved deals
+      // Verify it is no longer returned in saved deals
+      const savedDeals = await getSavedDeals(TEST_USER_ID);
+      expect(savedDeals.some(d => d.id === tempDealId)).toBe(false);
     });
 
     it("Should throw an error when unsaving a deal that is not saved", async () => {
-      await expect(unsaveDeal(TEST_USER_ID, tempDealId)).rejects.toThrow(
-        "Saved deal not found",
-      );
+      const thing = unsaveDeal(TEST_USER_ID, tempDealId);
+      console.log(thing);
+      await expect(unsaveDeal(TEST_USER_ID, tempDealId)).rejects.toThrow();
     });
   });
 

@@ -50,17 +50,17 @@ export async function getSavedDeals(userId: string): Promise<Deal[]> {
 export async function unsaveDeal(
   userId: string,
   dealId: string,
-): Promise<SavedDeal> {
+): Promise<boolean> {
   const { data, error } = await supabase
     .from("saved_deals")
     .delete()
     .eq("user_id", userId)
     .eq("deal_id", dealId)
     .select()
-    .maybeSingle(); // Return the deleted row
+    .maybeSingle();
 
   if (error) throw new Error(error.message);
-  if (!data) throw new Error("Saved deal not found");
+  // if (!data) throw new Error("Saved deal not found");
 
-  return data;
+  return !!data; // True if row was deleted, false otherwise
 }

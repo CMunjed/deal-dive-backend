@@ -17,7 +17,10 @@ export async function upsertTags(tagNames: string[]): Promise<Tag[]> {
 }
 
 // Link a deal to a set of tags (and create missing tags as needed)
-export async function linkDealTags(dealId: string, tagNames: string[]): Promise<void> {
+export async function linkDealTags(
+  dealId: string,
+  tagNames: string[],
+): Promise<void> {
   if (tagNames.length == 0) return;
 
   const upsertedTags = await upsertTags(tagNames);

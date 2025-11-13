@@ -1,5 +1,9 @@
 import { supabase } from "../../src/config/supabase-client.js";
-import { deleteDeal, getDeal, updateDeal } from "../../src/services/deals.service.js";
+import {
+  deleteDeal,
+  getDeal,
+  updateDeal,
+} from "../../src/services/deals.service.js";
 import { cleanupDeal, createTestDeal } from "./deals.util.js";
 
 const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6";
@@ -115,5 +119,4 @@ describe("Deal Tags & Categories", () => {
 
     await cleanupDeal(dealId); // Just in case
   });
-
 });

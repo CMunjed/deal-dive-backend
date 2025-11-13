@@ -1,6 +1,10 @@
 import { supabase } from "../../src/config/supabase-client.js";
 import { deleteDeal } from "../../src/services/deals.service.js";
-import { upsertTags, linkDealTags, unlinkDealTags } from "../../src/services/tags.service.js";
+import {
+  upsertTags,
+  linkDealTags,
+  // unlinkDealTags,
+} from "../../src/services/tags.service.js";
 import { createTestDeal } from "../deals/deals.util.js";
 
 const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6";
@@ -16,7 +20,10 @@ describe("Tags Service", () => {
   afterEach(async () => {
     // Clean up test tags
     await supabase.from("deal_tags").delete().eq("deal_id", testDealId);
-    await supabase.from("tags").delete().in("name_lower", ["test_tag1___", "test_tag2___"]);
+    await supabase
+      .from("tags")
+      .delete()
+      .in("name_lower", ["test_tag1___", "test_tag2___"]);
   });
 
   afterAll(async () => {
@@ -26,7 +33,9 @@ describe("Tags Service", () => {
   it("upsertTags should create new tags and return them", async () => {
     const tags = await upsertTags(["Test_tag1___", "Test_tag2___"]);
     expect(tags).toHaveLength(2);
-    expect(tags.map(t => t.name_lower)).toEqual(expect.arrayContaining(["test_tag1___", "test_tag2___"]));
+    expect(tags.map((t) => t.name_lower)).toEqual(
+      expect.arrayContaining(["test_tag1___", "test_tag2___"]),
+    );
   });
 
   it("upsertTags should return an empty array if the input is empty", async () => {
@@ -36,7 +45,7 @@ describe("Tags Service", () => {
 
   it("linkDealTags should link tags to a deal, creating missing tags", async () => {
     await linkDealTags(testDealId, ["Test_tag1___", "Test_tag2___"]);
-  
+
     const { data: links, error: linkError } = await supabase
       .from("deal_tags")
       .select("tag_id")
@@ -48,11 +57,14 @@ describe("Tags Service", () => {
     const { data: tags, error: tagError } = await supabase
       .from("tags")
       .select("id, name_lower")
-      .in("id", links!.map((l) => l.tag_id));
+      .in(
+        "id",
+        links!.map((l) => l.tag_id),
+      );
 
     expect(tagError).toBeNull();
     expect(tags!.map((t) => t.name_lower)).toEqual(
-      expect.arrayContaining(["test_tag1___", "test_tag2___"])
+      expect.arrayContaining(["test_tag1___", "test_tag2___"]),
     );
   });
 
@@ -78,5 +90,4 @@ describe("Tags Service", () => {
 
     expect(links).toHaveLength(0);
   });*/
-
 });

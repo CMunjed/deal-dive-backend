@@ -2,17 +2,18 @@ import { supabase } from "../config/supabase-client.js";
 import { DealInsert, Deal } from "../types/deals.types.js";
 
 // Helper function to upsert tags on deal creation
-async function upsertTags(tagNames: string[]) {
-  const lowerTags = tagNames.map((t) => ({ name: t, name_lower: t.toLowerCase() }));
+export async function upsertTags(tagNames: string[]) {
+  if (tagNames.length === 0) return [];
 
-  // Upsert based on unique lower name
+  const rowsToInsert = tagNames.map((name) => ({ name: name.trim() }));
+
   const { data, error } = await supabase
     .from("tags")
-    .upsert(lowerTags, { onConflict: "name_lower" })
+    .upsert(rowsToInsert, { onConflict: "name_lower" }) // Uses the generated column for uniqueness
     .select();
 
   if (error) throw error;
-  return data || [];
+  return data;
 }
 
 // Create new deal
@@ -20,7 +21,7 @@ export async function createDeal(
   userId: string,
   deal: Omit<DealInsert, "created_by"> // Accept a deal of DealInsert type, excluding user id (passed in separately)
   & { tags?: string[]; categories?: string[] }, // Allow a passed-in list of tags and categories along with the deal
-): Promise<Deal> {
+): Promise<Deal & { tags: string[]; categories: string[] }> {
 
   const { tags = [], categories = [], ...dealData } = deal;
 
@@ -39,9 +40,9 @@ export async function createDeal(
   // Handle tags
   if (tags.length > 0) {
     const upsertedTags = await upsertTags(tags);
-    const dealTagLinks = upsertedTags.map((tag) => ({
+    const dealTagLinks = upsertedTags.map((t) => ({
       deal_id: dealId,
-      tag_id: tag.id,
+      tag_id: t.id,
     }));
     // Link deal to its tags by creating new rows in deal_tags
     await supabase.from("deal_tags").insert(dealTagLinks);
@@ -49,10 +50,12 @@ export async function createDeal(
 
   // Handle categories (must already exist)
   if (categories.length > 0) {
+    // Only set categories if they exist
     const { data: foundCategories, error: categoryError } = await supabase
       .from("categories")
       .select("id, name_lower")
       .in("name_lower", categories.map((c) => c.toLowerCase()));
+
     if (categoryError) throw categoryError;
 
     const dealCategoryLinks = (foundCategories || []).map((c) => ({
@@ -71,31 +74,22 @@ export async function createDeal(
 
 // Get one deal by ID
 export async function getDeal(dealId: string): Promise<Deal & { tags: string[]; categories: string[] }> {
-  const { data: deal, error } = await supabase
+  const { data, error } = await supabase
     .from("deals")
-    .select("*")
+    .select(`
+      *,
+      deal_tags:deal_tags(tags(name_lower)),
+      deal_categories:deal_categories(categories(name_lower))
+    `)
     .eq("id", dealId)
     .single();
 
-  if (error || !deal) throw new Error("Deal not found");
+  if (error || !data) throw new Error("Deal not found");
 
-  // Retrieve tags
-  const { data: tags } = await supabase
-    .from("deal_tags")
-    .select("tags(name)")
-    .eq("deal_id", dealId);
-
-  // Retrieve categories
-  const { data: categories } = await supabase
-    .from("deal_categories")
-    .select("categories(name)")
-    .eq("deal_id", dealId);
-
-  // Return deal and its tags + categories
   return {
-    ...deal,
-    tags: tags?.map((t) => t.tags.name) || [],
-    categories: categories?.map((c) => c.categories.name) || [],
+    ...data,
+    tags: data.deal_tags?.map((t: any) => t.tags.name_lower) || [],
+    categories: data.deal_categories?.map((c: any) => c.categories.name_lower) || [],
   };
 }
 
@@ -108,11 +102,13 @@ export async function getDeals(userId?: string): Promise<Deal[]> {
     query = query.eq("created_by", userId);
   }
 
-  const { data, error } = await query;
-
+  const { data: deals, error } = await query;
   if (error) throw error;
 
-  return data ?? []; // Return all fetched matching deals
+  // Fetch full deals with tags/categories
+  const fullDeals = await Promise.all(deals.map((d) => getDeal(d.id)));
+
+  return fullDeals ?? []; // Return all fetched matching deals
 }
 
 /* TODO - getDeals with multiple filters
@@ -130,43 +126,80 @@ export async function getDeals(filters?: { userId?: string; tag?: string; locati
 
 export async function updateDeal(
   dealId: string,
-  updates: Partial<Deal>,
-): Promise<Deal> {
-  // TODO: Either add a manual check or RLS to only allow users to update their own deals
-  const { data, error } = await supabase
+  updates: Partial<
+    Omit<Deal, "id" | "created_by" | "created_at" | "updated_at">
+  > & { tags?: string[]; categories?: string[] },
+): Promise<Deal & { tags: string[]; categories: string[] }> {
+  const { tags, categories, ...dealData } = updates;
+
+  // Verify deal exists
+  const { data: existing, error: fetchError } = await supabase
     .from("deals")
-    .update(updates)
+    .select("id")
+    .eq("id", dealId)
+    .single();
+
+  if (fetchError || !existing) throw new Error("Deal not found");
+
+  // Update deal in deals table
+  const { error: updateError } = await supabase
+    .from("deals")
+    .update({ ...dealData, updated_at: new Date().toISOString() })
     .eq("id", dealId)
     .select()
-    .maybeSingle(); // Return one object (the updated deal)
+    .single();
 
-  if (error) {
-    throw error;
+  if (updateError) throw updateError;
+
+  // Handle tags
+  if (tags) {
+    // Remove old tags
+    await supabase.from("deal_tags").delete().eq("deal_id", dealId);
+
+    if (tags.length > 0) {
+      const upsertedTags = await upsertTags(tags);
+      const linkRows = upsertedTags.map((t) => ({
+        deal_id: dealId,
+        tag_id: t.id,
+      }));
+      await supabase.from("deal_tags").insert(linkRows);
+    }
   }
 
-  if (!data) {
-    throw new Error("Deal not found");
+  // Handle categories
+  if (categories) {
+    // Remove old categories
+    await supabase.from("deal_categories").delete().eq("deal_id", dealId);
+
+    // Only set categories if they exist
+    if (categories.length > 0) {
+      const { data: foundCategories, error: categoryError } = await supabase
+        .from("categories")
+        .select("id, name_lower")
+        .in("name_lower", categories.map((c) => c.toLowerCase()));
+
+      if (categoryError) throw categoryError;
+
+      const linkRows = (foundCategories || []).map((c) => ({
+        deal_id: dealId,
+        category_id: c.id,
+      }));
+      if (linkRows.length > 0)
+        await supabase.from("deal_categories").insert(linkRows);
+    }
   }
 
-  return data;
+  // Return updated deal with tags + categories
+  return getDeal(dealId);
 }
 
 export async function deleteDeal(dealId: string): Promise<Deal> {
-  // TODO: Either add a manual check or RLS to only allow users to delete their own deals
-  const { data, error } = await supabase
-    .from("deals")
-    .delete()
-    .eq("id", dealId)
-    .select()
-    .maybeSingle(); // Return one object (the deleted deal)
+  const deal = await getDeal(dealId).catch(() => null);
+  if (!deal) throw new Error("Deal not found");
 
-  if (error) {
-    throw error;
-  }
+  // Delete deal (cascade removes associated deal_tags and deal_categories relationships)
+  const { error } = await supabase.from("deals").delete().eq("id", dealId);
+  if (error) throw error;
 
-  if (!data) {
-    throw new Error("Deal not found");
-  }
-
-  return data;
+  return deal; // Useful in assertions in tests
 }

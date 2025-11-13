@@ -3,6 +3,12 @@ import { DealInsert, Deal } from "../types/deals.types.js";
 import { linkDealCategories, unlinkDealCategories } from "./categories.service.js";
 import { linkDealTags, unlinkDealTags } from "./tags.service.js";
 
+// Helper type for getDeal and getDeals, represents deal object with joined tables
+type DealWithRelations = Deal & {
+  deal_tags?: { tags: { name_lower: string } }[];
+  deal_categories?: { categories: { name_lower: string } }[];
+};
+
 // Create new deal
 export async function createDeal(
   userId: string,
@@ -23,48 +29,6 @@ export async function createDeal(
   // if (!newDeal) throw new Error("message here");
 
   const dealId = newDeal.id;
-  /*
-  // Handle tags
-  if (tags.length > 0) {
-    const upsertedTags = await upsertTags(tags);
-    const dealTagLinks = upsertedTags.map((t) => ({
-      deal_id: dealId,
-      tag_id: t.id,
-    }));
-    // Link deal to its tags by creating new rows in deal_tags
-    // await supabase.from("deal_tags").insert(dealTagLinks);
-    const { error: linkError } = await supabase
-      .from("deal_tags")
-      .insert(dealTagLinks)
-      .select(); // Ensures we wait until rows exist
-
-      if (linkError) throw linkError;
-  }
-
-  // Handle categories (must already exist)
-  if (categories.length > 0) {
-    // Only set categories if they exist
-    const { data: foundCategories, error: categoryError } = await supabase
-      .from("categories")
-      .select("id, name_lower")
-      .in("name_lower", categories.map((c) => c.toLowerCase()));
-
-    if (categoryError) throw categoryError;
-
-    const dealCategoryLinks = (foundCategories || []).map((c) => ({
-      deal_id: dealId,
-      category_id: c.id,
-    }));
-    // Link deal to its categories by creating new rows in deal_categories
-    if (dealCategoryLinks.length > 0) {
-      //await supabase.from("deal_categories").insert(dealCategoryLinks);
-      const { error: categoryLinkError } = await supabase
-        .from("deal_categories")
-        .insert(dealCategoryLinks)
-        .select(); // Ensures rows exist
-      if (categoryLinkError) throw categoryLinkError;
-    }
-  }*/
 
   // Handle tags and categories
   if (tags.length > 0) await linkDealTags(dealId, tags);
@@ -89,15 +53,17 @@ export async function getDeal(dealId: string): Promise<Deal & { tags: string[]; 
 
   if (error || !data) throw new Error("Deal not found");
 
+  const { deal_tags, deal_categories, ...rest } = data as DealWithRelations;
+
   return {
-    ...data,
-    tags: data.deal_tags?.map((t: any) => t.tags.name_lower) || [],
-    categories: data.deal_categories?.map((c: any) => c.categories.name_lower) || [],
+    ...rest,
+    tags: deal_tags?.map((t: any) => t.tags.name_lower) || [],
+    categories: deal_categories?.map((c: any) => c.categories.name_lower) || [],
   };
 }
 
 // Get multiple deals - currently, either get all deals, or filter by user id
-export async function getDeals(userId?: string): Promise<Deal[]> {
+export async function getDeals(userId?: string): Promise<(Deal & { tags: string[]; categories: string[] }) []> {
   /*let query = supabase.from("deals").select("*");
 
   // If userId is provided, filter by it
@@ -133,11 +99,21 @@ export async function getDeals(userId?: string): Promise<Deal[]> {
   if (!data) return [];
 
   // Map tags and categories to arrays of strings
-  return data.map((deal: any) => ({
+  /*return data.map((deal: any) => ({
     ...deal,
     tags: deal.deal_tags?.map((t: any) => t.tags.name_lower) || [],
     categories: deal.deal_categories?.map((c: any) => c.categories.name_lower) || [],
-  }));
+  }));*/
+
+  return (Array.isArray(data) ? data : [data]).map((deal) => {
+    const { deal_tags, deal_categories, ...rest } = deal as DealWithRelations;
+
+    return {
+      ...rest,
+      tags: deal_tags?.map((t) => t.tags.name_lower) || [],
+      categories: deal_categories?.map((c) => c.categories.name_lower) || [],
+    };
+  });
 }
 
 /* TODO - getDeals with multiple filters
@@ -179,45 +155,6 @@ export async function updateDeal(
     .single();
 
   if (updateError) throw updateError;
-
-  /*
-  // Handle tags
-  if (tags) {
-    // Remove old tags
-    await supabase.from("deal_tags").delete().eq("deal_id", dealId);
-
-    if (tags.length > 0) {
-      const upsertedTags = await upsertTags(tags);
-      const linkRows = upsertedTags.map((t) => ({
-        deal_id: dealId,
-        tag_id: t.id,
-      }));
-      await supabase.from("deal_tags").insert(linkRows);
-    }
-  }
-
-  // Handle categories
-  if (categories) {
-    // Remove old categories
-    await supabase.from("deal_categories").delete().eq("deal_id", dealId);
-
-    // Only set categories if they exist
-    if (categories.length > 0) {
-      const { data: foundCategories, error: categoryError } = await supabase
-        .from("categories")
-        .select("id, name_lower")
-        .in("name_lower", categories.map((c) => c.toLowerCase()));
-
-      if (categoryError) throw categoryError;
-
-      const linkRows = (foundCategories || []).map((c) => ({
-        deal_id: dealId,
-        category_id: c.id,
-      }));
-      if (linkRows.length > 0)
-        await supabase.from("deal_categories").insert(linkRows);
-    }
-  }*/
 
   if (tags) {
     await unlinkDealTags(dealId);

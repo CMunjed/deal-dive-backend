@@ -1,21 +1,73 @@
 import { supabase } from "../config/supabase-client.js";
 import { DealInsert, Deal } from "../types/deals.types.js";
 
+// Helper function to upsert tags on deal creation
+async function upsertTags(tagNames: string[]) {
+  const lowerTags = tagNames.map((t) => ({ name: t, name_lower: t.toLowerCase() }));
+
+  // Upsert based on unique lower name
+  const { data, error } = await supabase
+    .from("tags")
+    .upsert(lowerTags, { onConflict: "name_lower" })
+    .select();
+
+  if (error) throw error;
+  return data || [];
+}
+
 // Create new deal
 export async function createDeal(
   userId: string,
-  deal: Omit<DealInsert, "created_by">, // Accept a deal of DealInsert type, excluding user id (passed in separately)
+  deal: Omit<DealInsert, "created_by"> // Accept a deal of DealInsert type, excluding user id (passed in separately)
+  & { tags?: string[]; categories?: string[] }, // Allow a passed-in list of tags and categories along with the deal
 ): Promise<Deal> {
-  const { data, error } = await supabase
+
+  const { tags = [], categories = [], ...dealData } = deal;
+
+  // Create deal in DB
+  const { data: newDeal, error: dealError } = await supabase
     .from("deals")
-    .insert([{ ...deal, created_by: userId }])
+    .insert([{ ...dealData, created_by: userId }])
     .select()
-    .single(); // Return one object (the created deal)
+    .single();
 
-  if (error) throw error;
+  if (dealError) throw dealError;
+  // if (!newDeal) throw new Error("message here");
 
-  return data;
+  const dealId = newDeal.id;
+
+  // Handle tags
+  if (tags.length > 0) {
+    const upsertedTags = await upsertTags(tags);
+    const dealTagLinks = upsertedTags.map((tag) => ({
+      deal_id: dealId,
+      tag_id: tag.id,
+    }));
+    // Link deal to its tags by creating new rows in deal_tags
+    await supabase.from("deal_tags").insert(dealTagLinks);
+  }
+
+  // Handle categories (must already exist)
+  if (categories.length > 0) {
+    const { data: foundCategories, error: categoryError } = await supabase
+      .from("categories")
+      .select("id, name_lower")
+      .in("name_lower", categories.map((c) => c.toLowerCase()));
+    if (categoryError) throw categoryError;
+
+    const dealCategoryLinks = (foundCategories || []).map((c) => ({
+      deal_id: dealId,
+      category_id: c.id,
+    }));
+    // Link deal to its categories by creating new rows in deal_categories
+    if (dealCategoryLinks.length > 0)
+      await supabase.from("deal_categories").insert(dealCategoryLinks);
+  }
+
+  // Return full deal with relations
+  return await getDeal(dealId);
 }
+
 
 // Get one deal by ID
 export async function getDeal(dealId: string): Promise<Deal & { tags: string[]; categories: string[] }> {

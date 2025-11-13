@@ -1,20 +1,7 @@
 import { supabase } from "../config/supabase-client.js";
 import { DealInsert, Deal } from "../types/deals.types.js";
-
-// Helper function to upsert tags on deal creation
-export async function upsertTags(tagNames: string[]) {
-  if (tagNames.length === 0) return [];
-
-  const rowsToInsert = tagNames.map((name) => ({ name: name.trim() }));
-
-  const { data, error } = await supabase
-    .from("tags")
-    .upsert(rowsToInsert, { onConflict: "name_lower" }) // Uses the generated column for uniqueness
-    .select();
-
-  if (error) throw error;
-  return data;
-}
+import { linkDealCategories, unlinkDealCategories } from "./categories.service.js";
+import { linkDealTags, unlinkDealTags } from "./tags.service.js";
 
 // Create new deal
 export async function createDeal(
@@ -36,7 +23,7 @@ export async function createDeal(
   // if (!newDeal) throw new Error("message here");
 
   const dealId = newDeal.id;
-
+  /*
   // Handle tags
   if (tags.length > 0) {
     const upsertedTags = await upsertTags(tags);
@@ -45,7 +32,13 @@ export async function createDeal(
       tag_id: t.id,
     }));
     // Link deal to its tags by creating new rows in deal_tags
-    await supabase.from("deal_tags").insert(dealTagLinks);
+    // await supabase.from("deal_tags").insert(dealTagLinks);
+    const { error: linkError } = await supabase
+      .from("deal_tags")
+      .insert(dealTagLinks)
+      .select(); // Ensures we wait until rows exist
+
+      if (linkError) throw linkError;
   }
 
   // Handle categories (must already exist)
@@ -63,9 +56,19 @@ export async function createDeal(
       category_id: c.id,
     }));
     // Link deal to its categories by creating new rows in deal_categories
-    if (dealCategoryLinks.length > 0)
-      await supabase.from("deal_categories").insert(dealCategoryLinks);
-  }
+    if (dealCategoryLinks.length > 0) {
+      //await supabase.from("deal_categories").insert(dealCategoryLinks);
+      const { error: categoryLinkError } = await supabase
+        .from("deal_categories")
+        .insert(dealCategoryLinks)
+        .select(); // Ensures rows exist
+      if (categoryLinkError) throw categoryLinkError;
+    }
+  }*/
+
+  // Handle tags and categories
+  if (tags.length > 0) await linkDealTags(dealId, tags);
+  if (categories.length > 0) await linkDealCategories(dealId, categories);
 
   // Return full deal with relations
   return await getDeal(dealId);
@@ -95,7 +98,7 @@ export async function getDeal(dealId: string): Promise<Deal & { tags: string[]; 
 
 // Get multiple deals - currently, either get all deals, or filter by user id
 export async function getDeals(userId?: string): Promise<Deal[]> {
-  let query = supabase.from("deals").select("*");
+  /*let query = supabase.from("deals").select("*");
 
   // If userId is provided, filter by it
   if (userId) {
@@ -108,7 +111,33 @@ export async function getDeals(userId?: string): Promise<Deal[]> {
   // Fetch full deals with tags/categories
   const fullDeals = await Promise.all(deals.map((d) => getDeal(d.id)));
 
-  return fullDeals ?? []; // Return all fetched matching deals
+  return fullDeals ?? []; // Return all fetched matching deals*/
+
+  let query = supabase
+    .from("deals")
+    .select(`
+      *,
+      deal_tags:deal_tags(tags(name_lower)),
+      deal_categories:deal_categories(categories(name_lower))
+    `);
+
+  if (userId) {
+    query = query.eq("created_by", userId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+
+  // If no deals found, return empty array
+  if (!data) return [];
+
+  // Map tags and categories to arrays of strings
+  return data.map((deal: any) => ({
+    ...deal,
+    tags: deal.deal_tags?.map((t: any) => t.tags.name_lower) || [],
+    categories: deal.deal_categories?.map((c: any) => c.categories.name_lower) || [],
+  }));
 }
 
 /* TODO - getDeals with multiple filters
@@ -151,6 +180,7 @@ export async function updateDeal(
 
   if (updateError) throw updateError;
 
+  /*
   // Handle tags
   if (tags) {
     // Remove old tags
@@ -187,6 +217,16 @@ export async function updateDeal(
       if (linkRows.length > 0)
         await supabase.from("deal_categories").insert(linkRows);
     }
+  }*/
+
+  if (tags) {
+    await unlinkDealTags(dealId);
+    if (tags.length > 0) await linkDealTags(dealId, tags);
+  }
+
+  if (categories) {
+    await unlinkDealCategories(dealId);
+    if (categories.length > 0) await linkDealCategories(dealId, categories);
   }
 
   // Return updated deal with tags + categories

@@ -6,6 +6,7 @@ import {
   getDeals,
   updateDeal,
 } from "../services/deals.service.js";
+import { requireUserId } from "../middleware/auth-middleware.js";
 
 // TODO: Consider moving this helper function somewhere else
 const handleError = (res: Response, error: unknown) => {
@@ -20,9 +21,9 @@ const handleError = (res: Response, error: unknown) => {
 };
 
 export async function createDealController(req: Request, res: Response) {
+  const userId = requireUserId(req);
+  const dealData = req.body;
   try {
-    const userId = req.body.userId; // TODO: Get this from auth middleware instead of the request body
-    const dealData = req.body;
     const deal = await createDeal(userId, dealData);
     return res.status(201).json(deal);
   } catch (error: unknown) {
@@ -31,8 +32,8 @@ export async function createDealController(req: Request, res: Response) {
 }
 
 export async function getDealController(req: Request, res: Response) {
+  const dealId = req.params.id;
   try {
-    const dealId = req.params.id;
     const deal = await getDeal(dealId);
     return res.status(200).json(deal);
   } catch (error: unknown) {
@@ -42,8 +43,8 @@ export async function getDealController(req: Request, res: Response) {
 
 export async function getDealsController(req: Request, res: Response) {
   // TODO: Modify this to accept more query parameters as added
+  const { userId } = req.query;
   try {
-    const { userId } = req.query;
     const deals = await getDeals(userId as string | undefined);
     return res.status(200).json(deals);
   } catch (error: unknown) {
@@ -52,9 +53,9 @@ export async function getDealsController(req: Request, res: Response) {
 }
 
 export async function updateDealController(req: Request, res: Response) {
+  const dealId = req.params.id;
+  const updates = req.body;
   try {
-    const dealId = req.params.id;
-    const updates = req.body;
     const updatedDeal = await updateDeal(dealId, updates);
     return res.status(200).json(updatedDeal);
   } catch (error: unknown) {
@@ -63,8 +64,8 @@ export async function updateDealController(req: Request, res: Response) {
 }
 
 export async function deleteDealController(req: Request, res: Response) {
+  const dealId = req.params.id;
   try {
-    const dealId = req.params.id;
     const deletedDeal = await deleteDeal(dealId);
     return res.status(200).json(deletedDeal);
   } catch (error: unknown) {

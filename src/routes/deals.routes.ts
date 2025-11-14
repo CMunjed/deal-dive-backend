@@ -20,9 +20,9 @@ router.get("/:id", getDealController);
 router.get("/", getDealsController);
 
 // PUT /api/v1/deals
-router.put("/:id", updateDealController);
+router.put("/:id", /*TODO: attach authMiddleware,*/ updateDealController);
 
 // DELETE /api/v1/deals
-router.delete("/:id", deleteDealController);
+router.delete("/:id", /*TODO: attach authMiddleware,*/ deleteDealController);
 
 export default router;

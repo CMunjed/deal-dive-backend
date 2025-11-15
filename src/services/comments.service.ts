@@ -52,11 +52,17 @@ export async function deleteComment(
   commentId: string,
   userId: string,
 ): Promise<void> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("comments")
     .delete()
     .eq("id", commentId)
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .select();
 
   if (error) throw new Error(`Failed to delete comment: ${error.message}`);
+  
+  // Check if any rows were deleted
+  if (!data || data.length === 0) {
+    throw new Error("Comment not found or unauthorized");
+  }
 }

@@ -50,11 +50,17 @@ export async function deleteReport(
   reportId: string,
   userId: string,
 ): Promise<void> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("reports")
     .delete()
     .eq("id", reportId)
-    .eq("reporter_id", userId);
+    .eq("reporter_id", userId)
+    .select();
 
   if (error) throw new Error(`Failed to delete report: ${error.message}`);
+
+  // Check if any rows were deleted
+  if (!data || data.length === 0) {
+    throw new Error("Report not found or unauthorized");
+  }
 }

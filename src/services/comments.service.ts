@@ -60,7 +60,7 @@ export async function deleteComment(
     .select();
 
   if (error) throw new Error(`Failed to delete comment: ${error.message}`);
-  
+
   // Check if any rows were deleted
   if (!data || data.length === 0) {
     throw new Error("Comment not found or unauthorized");

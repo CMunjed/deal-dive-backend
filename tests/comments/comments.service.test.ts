@@ -131,9 +131,7 @@ describe("Comments Service Tests", () => {
       );
 
       // Try to delete with different user
-      await expect(
-        deleteComment(comment.id, TEST_USER_ID_2),
-      ).rejects.toThrow();
+      await expect(deleteComment(comment.id, TEST_USER_ID_2)).rejects.toThrow();
 
       // Comment should still exist
       const result = await getCommentsByDeal(testDealId);

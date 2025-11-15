@@ -58,7 +58,7 @@ export async function deleteReport(
     .select();
 
   if (error) throw new Error(`Failed to delete report: ${error.message}`);
-  
+
   // Check if any rows were deleted
   if (!data || data.length === 0) {
     throw new Error("Report not found or unauthorized");

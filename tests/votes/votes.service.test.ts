@@ -41,11 +41,7 @@ describe("Votes Service Tests", () => {
     });
 
     it("should add a downvote to a deal", async () => {
-      const vote = await addVote(
-        TEST_USER_ID,
-        testDealId,
-        VOTE_TYPES.DOWNVOTE,
-      );
+      const vote = await addVote(TEST_USER_ID, testDealId, VOTE_TYPES.DOWNVOTE);
 
       expect(vote).toHaveProperty("id");
       expect(vote.vote_type).toBe(VOTE_TYPES.DOWNVOTE);

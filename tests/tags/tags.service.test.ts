@@ -77,7 +77,6 @@ describe("Tags Service", () => {
     expect(links).toHaveLength(0);
   });
 
-  
   it("unlinkDealTags should remove all tags linked to a deal", async () => {
     await linkDealTags(testDealId, ["test_tag1___", "test_tag2___"]);
 

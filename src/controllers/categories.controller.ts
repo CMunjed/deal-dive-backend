@@ -5,7 +5,7 @@ export async function getAllCategoriesController(_req: Request, res: Response) {
   try {
     const categories = await getAllCategories();
     res.status(200).json(categories);
-  } catch (err: any) {
+  } catch {
     res.status(500).json({ error: "Failed to fetch categories" });
   }
 }

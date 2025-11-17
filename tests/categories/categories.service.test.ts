@@ -1,6 +1,6 @@
 import { supabase } from "../../src/config/supabase-client.js";
 import {
-    getAllCategories,
+  getAllCategories,
   getCategoriesByName,
   linkDealCategories,
   unlinkDealCategories,
@@ -19,10 +19,9 @@ describe("Category Service Tests", () => {
     testCategory1 = "test_category_1";
     testCategory2 = "test_category_2";
 
-    await supabase.from("categories").insert([
-      { name: testCategory1 },
-      { name: testCategory2 },
-    ]);
+    await supabase
+      .from("categories")
+      .insert([{ name: testCategory1 }, { name: testCategory2 }]);
 
     // Create a deal to link categories to
     const deal = await createTestDeal(TEST_USER_ID);
@@ -46,10 +45,10 @@ describe("Category Service Tests", () => {
     expect(categories.length).toBeGreaterThan(0);
 
     const expected = [testCategory1.toLowerCase(), testCategory2.toLowerCase()];
-    const returned = categories.map(c => c.name_lower);
+    const returned = categories.map((c) => c.name_lower);
 
-    expected.forEach(name => {
-        expect(returned).toContain(name);
+    expected.forEach((name) => {
+      expect(returned).toContain(name);
     });
   });
 
@@ -82,7 +81,7 @@ describe("Category Service Tests", () => {
 
     const linkedNames = links!.map((l) => l.categories.name_lower);
     expect(linkedNames).toEqual(
-      expect.arrayContaining([testCategory1, testCategory2])
+      expect.arrayContaining([testCategory1, testCategory2]),
     );
   });
 
@@ -100,5 +99,4 @@ describe("Category Service Tests", () => {
 
     expect(links).toHaveLength(0);
   });
-
 });

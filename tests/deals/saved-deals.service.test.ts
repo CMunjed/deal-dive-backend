@@ -99,6 +99,12 @@ describe("Saved Deals Service Tests", () => {
 
       const savedIds = savedDeals.map(d => d.id);
       expect(savedIds).toEqual(expect.arrayContaining([dealId1, dealId2]));
+
+      // Check tags/categories integration (sanity check)
+      for (const deal of savedDeals) {
+        expect(Array.isArray(deal.tags)).toBe(true);
+        expect(Array.isArray(deal.categories)).toBe(true);
+      }
     });
 
     it("Should return an empty array for a user with no saved deals", async () => {

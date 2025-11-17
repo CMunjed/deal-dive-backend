@@ -13,6 +13,8 @@ export async function saveDeal(
     .select()
     .single();
 
+  // Currently throws an error if a deal is already saved
+  // TODO: Consider handling gracefully instead
   if (error) throw new Error(error.message);
   return data;
 }

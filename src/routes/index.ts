@@ -4,6 +4,7 @@ import dealsRoutes from "./deals.routes.js";
 import commentsRoutes from "./comments.routes.js";
 import reportsRoutes from "./reports.routes.js";
 import votesRoutes from "./votes.routes.js";
+import categoriesRoutes from "./categories.routes.js";
 
 const router = Router();
 
@@ -13,5 +14,6 @@ router.use("/deals", dealsRoutes);
 router.use("/", commentsRoutes);
 router.use("/", reportsRoutes);
 router.use("/deals", votesRoutes);
+router.use("/categories", categoriesRoutes);
 
 export default router;

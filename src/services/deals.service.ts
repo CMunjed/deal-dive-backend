@@ -74,21 +74,6 @@ export async function getDeal(
 export async function getDeals(
   userId?: string,
 ): Promise<(Deal & { tags: string[]; categories: string[] })[]> {
-  /*let query = supabase.from("deals").select("*");
-
-  // If userId is provided, filter by it
-  if (userId) {
-    query = query.eq("created_by", userId);
-  }
-
-  const { data: deals, error } = await query;
-  if (error) throw error;
-
-  // Fetch full deals with tags/categories
-  const fullDeals = await Promise.all(deals.map((d) => getDeal(d.id)));
-
-  return fullDeals ?? []; // Return all fetched matching deals*/
-
   let query = supabase.from("deals").select(`
       *,
       deal_tags:deal_tags(tags(name_lower)),
@@ -107,12 +92,6 @@ export async function getDeals(
   if (!data) return [];
 
   // Map tags and categories to arrays of strings
-  /*return data.map((deal: any) => ({
-    ...deal,
-    tags: deal.deal_tags?.map((t: any) => t.tags.name_lower) || [],
-    categories: deal.deal_categories?.map((c: any) => c.categories.name_lower) || [],
-  }));*/
-
   return (Array.isArray(data) ? data : [data]).map((deal) => {
     const { deal_tags, deal_categories, ...rest } = deal as DealWithRelations;
 
@@ -123,19 +102,6 @@ export async function getDeals(
     };
   });
 }
-
-/* TODO - getDeals with multiple filters
-export async function getDeals(filters?: { userId?: string; tag?: string; location?: string }): Promise<Deal[]> {
-  let query = supabase.from("deals").select("*");
-
-  if (filters?.userId) query = query.eq("created_by", filters.userId);
-  if (filters?.tag) query = query.contains("tags", [filters.tag]);
-
-  const { data, error } = await query;
-  if (error) throw error;
-  return data || [];
-} 
-*/
 
 export async function updateDeal(
   dealId: string,

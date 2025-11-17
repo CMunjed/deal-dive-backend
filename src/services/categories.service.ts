@@ -1,6 +1,17 @@
 import { supabase } from "../config/supabase-client.js";
 import { Category } from "../types/tags-categories.types.js";
 
+// Return a list of all categories in the DB
+export async function getAllCategories(): Promise<Category[]> {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .order("name_lower", { ascending: true }); // Sorting (optional, but why not)
+
+  if (error) throw error;
+  return data ?? [];
+}
+
 // Fetch categories by their names (case-insensitive)
 export async function getCategoriesByName(
   names: string[],

@@ -1,11 +1,10 @@
 import { supabase } from "../../src/config/supabase-client.js";
-import { deleteDeal } from "../../src/services/deals.service.js";
 import {
   upsertTags,
   linkDealTags,
-  // unlinkDealTags,
+  unlinkDealTags,
 } from "../../src/services/tags.service.js";
-import { createTestDeal } from "../deals/deals.util.js";
+import { cleanupDeal, createTestDeal } from "../deals/deals.util.js";
 
 const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6";
 
@@ -13,21 +12,22 @@ describe("Tags Service", () => {
   let testDealId: string;
 
   beforeAll(async () => {
+    // Create test deal to perform tag operations on
     const deal = await createTestDeal(TEST_USER_ID);
     testDealId = deal.id;
   });
 
   afterEach(async () => {
-    // Clean up test tags
+    // Clean up test deal_tag relations
     await supabase.from("deal_tags").delete().eq("deal_id", testDealId);
     await supabase
       .from("tags")
-      .delete()
+      .delete() // Clean up the test tags we used
       .in("name_lower", ["test_tag1___", "test_tag2___"]);
   });
 
   afterAll(async () => {
-    await deleteDeal(testDealId);
+    await cleanupDeal(testDealId);
   });
 
   it("upsertTags should create new tags and return them", async () => {
@@ -68,26 +68,26 @@ describe("Tags Service", () => {
     );
   });
 
-  /*
   it("linkDealTags should do nothing if tag array is empty", async () => {
-    await linkDealTags(TEST_DEAL_ID, []);
+    await linkDealTags(testDealId, []);
     const { data: links } = await supabase
       .from("deal_tags")
       .select("*")
-      .eq("deal_id", TEST_DEAL_ID);
+      .eq("deal_id", testDealId);
     expect(links).toHaveLength(0);
   });
 
+  
   it("unlinkDealTags should remove all tags linked to a deal", async () => {
-    await linkDealTags(TEST_DEAL_ID, ["Coffee", "Pizza"]);
+    await linkDealTags(testDealId, ["test_tag1___", "test_tag2___"]);
 
-    await unlinkDealTags(TEST_DEAL_ID);
+    await unlinkDealTags(testDealId);
 
     const { data: links } = await supabase
       .from("deal_tags")
       .select("*")
-      .eq("deal_id", TEST_DEAL_ID);
+      .eq("deal_id", testDealId);
 
     expect(links).toHaveLength(0);
-  });*/
+  });
 });

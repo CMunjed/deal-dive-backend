@@ -27,7 +27,8 @@ export async function getSavedDeals(userId: string): Promise<Deal[]> {
     .select("deal_id")
     .eq("user_id", userId);
 
-  if (savedDealFetchError) throw new Error("Error fetching saved deals");
+  if (savedDealFetchError) throw new Error(savedDealFetchError.message); 
+  // throw new Error("Error fetching saved deals");
 
   const savedIds = (savedDealRows ?? [])
     .map((r) => r.deal_id) // Get deal ids from saved deal rows
@@ -43,7 +44,7 @@ export async function getSavedDeals(userId: string): Promise<Deal[]> {
   // query = applyOtherFilters(query, filters);
 
   const { data, error } = await query;
-  if (error) throw error;
+  if (error) throw new Error(error.message);
 
   return data ?? [];
 }

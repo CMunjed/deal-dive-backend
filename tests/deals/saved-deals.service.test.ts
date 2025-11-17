@@ -8,12 +8,13 @@ import { createTestDeal, cleanupDeal } from "./deals.util.js";
 const TEST_USER_ID = "f84b1687-1625-47f1-94c0-c81d6b946db6";
 
 describe("Saved Deals Service Tests", () => {
-
   describe("saveDeal", () => {
     let dealId: string;
 
     beforeEach(async () => {
-      const deal = await createTestDeal(TEST_USER_ID, { title: "Deal-Saving Test Deal" });
+      const deal = await createTestDeal(TEST_USER_ID, {
+        title: "Deal-Saving Test Deal",
+      });
       dealId = deal.id;
     });
 
@@ -41,7 +42,9 @@ describe("Saved Deals Service Tests", () => {
     let dealId: string;
 
     beforeEach(async () => {
-      const deal = await createTestDeal(TEST_USER_ID, { title: "Deal-Saving Test Deal" });
+      const deal = await createTestDeal(TEST_USER_ID, {
+        title: "Deal-Saving Test Deal",
+      });
       dealId = deal.id;
       await saveDeal(TEST_USER_ID, dealId);
     });
@@ -60,10 +63,10 @@ describe("Saved Deals Service Tests", () => {
       // expect(deleted.deal_id).toBe(tempDealId);
 
       const savedDeals = await getSavedDeals(TEST_USER_ID);
-      expect(savedDeals.some(d => d.id === dealId)).toBe(false);
+      expect(savedDeals.some((d) => d.id === dealId)).toBe(false);
     });
 
-    // If changed to throw error: 
+    // If changed to throw error:
     // `it("Should throw an error when unsaving a deal that is not saved", async () => {`
     it("Should return false when unsaving a deal that is not saved", async () => {
       await unsaveDeal(TEST_USER_ID, dealId); // First unsave
@@ -77,8 +80,12 @@ describe("Saved Deals Service Tests", () => {
     let dealId2: string;
 
     beforeEach(async () => {
-      const deal1 = await createTestDeal(TEST_USER_ID, { title: "Deal-Saving Test Deal 1" });
-      const deal2 = await createTestDeal(TEST_USER_ID, { title: "Deal-Saving Test Deal 2" });
+      const deal1 = await createTestDeal(TEST_USER_ID, {
+        title: "Deal-Saving Test Deal 1",
+      });
+      const deal2 = await createTestDeal(TEST_USER_ID, {
+        title: "Deal-Saving Test Deal 2",
+      });
       dealId1 = deal1.id;
       dealId2 = deal2.id;
 
@@ -97,7 +104,7 @@ describe("Saved Deals Service Tests", () => {
       const savedDeals = await getSavedDeals(TEST_USER_ID);
       expect(savedDeals.length).toBeGreaterThanOrEqual(2);
 
-      const savedIds = savedDeals.map(d => d.id);
+      const savedIds = savedDeals.map((d) => d.id);
       expect(savedIds).toEqual(expect.arrayContaining([dealId1, dealId2]));
 
       // Check tags/categories integration (sanity check)
@@ -108,7 +115,9 @@ describe("Saved Deals Service Tests", () => {
     });
 
     it("Should return an empty array for a user with no saved deals", async () => {
-      const savedDeals = await getSavedDeals("00000000-0000-0000-0000-000000000000");
+      const savedDeals = await getSavedDeals(
+        "00000000-0000-0000-0000-000000000000",
+      );
       expect(savedDeals).toEqual([]);
     });
   });

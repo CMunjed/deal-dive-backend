@@ -24,9 +24,7 @@ interface FetchDealsOptions {
 export async function fetchDealsWithRelations(
   options: FetchDealsOptions = {},
 ): Promise<(Deal & { tags: string[]; categories: string[] })[]> {
-  let query = supabase
-    .from("deals")
-    .select(`
+  let query = supabase.from("deals").select(`
       *,
       deal_tags:deal_tags(tags(name_lower)),
       deal_categories:deal_categories(categories(name_lower))

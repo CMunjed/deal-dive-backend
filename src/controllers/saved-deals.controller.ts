@@ -44,7 +44,7 @@ export async function unsaveDealController(req: Request, res: Response) {
   try {
     const deleted = await unsaveDeal(userId, dealId);
     if (!deleted) {
-      return res.status(404).json({error: "Saved deal not found" });
+      return res.status(404).json({ error: "Saved deal not found" });
     }
     // return res.status(200).json(deleted);
     return res.status(204).send();

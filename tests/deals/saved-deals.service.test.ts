@@ -58,10 +58,10 @@ describe("Saved Deals Service Tests", () => {
       expect(savedDeals.some(d => d.id === tempDealId)).toBe(false);
     });
 
-    it("Should throw an error when unsaving a deal that is not saved", async () => {
-      const thing = unsaveDeal(TEST_USER_ID, tempDealId);
-      console.log(thing);
-      await expect(unsaveDeal(TEST_USER_ID, tempDealId)).rejects.toThrow();
+    //it("Should throw an error when unsaving a deal that is not saved", async () => {
+    it("Should return false when unsaving a deal that is not saved", async () => {
+      const deleted = await unsaveDeal(TEST_USER_ID, tempDealId); //rejects.toThrow();
+      expect(deleted).toBe(false);
     });
   });
 

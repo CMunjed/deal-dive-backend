@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getDummyData } from "../services/dummy.service.js";
 
+// GET /api/v1/dummy
 export async function getDummyHandler(_req: Request, res: Response) {
   try {
     const data = await getDummyData();

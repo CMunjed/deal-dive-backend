@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase-client.js";
 import { Tag } from "../types/tags-categories.types.js";
 
-// Upsert tags on deal creation
+// Upsert tags on deal creation (tags are user-generated)
 export async function upsertTags(tagNames: string[]): Promise<Tag[]> {
   if (tagNames.length === 0) return [];
 
@@ -16,7 +16,7 @@ export async function upsertTags(tagNames: string[]): Promise<Tag[]> {
   return data ?? [];
 }
 
-// Link a deal to a set of tags (and create missing tags as needed)
+// Link a deal to a set of tags (and create tags if they don't exist)
 export async function linkDealTags(
   dealId: string,
   tagNames: string[],

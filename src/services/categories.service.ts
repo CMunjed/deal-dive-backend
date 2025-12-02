@@ -23,6 +23,7 @@ export async function getCategoriesByName(
     .select()
     .in(
       "name_lower",
+      // Match name_lower field to the passed-in names, converted to lowercase
       names.map((n) => n.toLowerCase()),
     );
 
@@ -30,7 +31,7 @@ export async function getCategoriesByName(
   return data ?? [];
 }
 
-// Link a deal to existing categories and ignore any categories that don't exist
+// Link a deal to existing categories, ignore any categories that don't exist
 export async function linkDealCategories(
   dealId: string,
   categoryNames: string[],

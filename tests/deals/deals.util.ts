@@ -11,8 +11,6 @@ const defaultTestDeal: Partial<Deal> = {
 export async function createTestDeal(
   userId: string,
   overrides: Partial<Deal & { tags?: string[]; categories?: string[] }> = {},
-  //{ tags = [], categories = [], }:
-  //{ tags?: string[]; categories?: string[] } = {},
 ): Promise<Deal & { tags?: string[]; categories?: string[] }> {
   const dealData = {
     ...defaultTestDeal,
@@ -20,11 +18,7 @@ export async function createTestDeal(
     discounted_price:
       overrides.discounted_price ?? defaultTestDeal.discounted_price!, // Required field
     ...overrides,
-    //tags,
-    //categories
   };
-
-  // console.log("Deal data: \n", dealData);
 
   const deal = await createDeal(userId, dealData);
   return deal;

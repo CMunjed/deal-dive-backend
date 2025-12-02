@@ -31,7 +31,6 @@ export async function getSavedDeals(
     .eq("user_id", userId);
 
   if (savedDealFetchError) throw new Error(savedDealFetchError.message);
-  // throw new Error("Error fetching saved deals");
 
   const savedIds = (savedDealRows ?? [])
     .map((r) => r.deal_id) // Get deal ids from saved deal rows
@@ -43,7 +42,7 @@ export async function getSavedDeals(
   return fetchDealsWithRelations({ ids: savedIds });
 }
 
-// Remove a saved deal - Currently returns the deleted row instead of empty response
+// Remove a saved deal
 export async function unsaveDeal(
   userId: string,
   dealId: string,
@@ -58,7 +57,7 @@ export async function unsaveDeal(
 
   if (error) throw new Error(error.message);
 
-  // If throwing an error for unsaving an already unsaved deal
+  // To throw an error for unsaving a deal that's not saved, uncomment
   // if (!data) throw new Error("Saved deal not found");
 
   return !!data; // True if row was deleted, false otherwise

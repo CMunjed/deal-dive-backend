@@ -14,11 +14,7 @@ export async function saveDealController(req: Request, res: Response) {
     const saved = await saveDeal(userId, dealId);
     return res.status(201).json(saved);
   } catch /*(error: unknown)*/ {
-    /*if (error instanceof Error && (error.message.includes("duplicate") || error.message.includes("unique"))) {
-      return res.status(409).json({ error: "Deal already saved" });
-    }
-    return res.status(500).json({ error: "Internal server error" }); */
-    // TODO: More standardized error handling
+    // TODO: More detailed error handling
     return res.status(500).json({ error: "Error saving deal" });
   }
 }
@@ -30,7 +26,8 @@ export async function getSavedDealsController(req: Request, res: Response) {
     const deals = await getSavedDeals(userId);
     return res.status(200).json(deals);
   } catch /*(error: unknown)*/ {
-    return res.status(500).json({ error: "Error fetching saved deals" }); // TODO: See above TODO
+    // TODO: More detailed error handling
+    return res.status(500).json({ error: "Error fetching saved deals" });
   }
 }
 
@@ -38,17 +35,18 @@ export async function getSavedDealsController(req: Request, res: Response) {
 export async function unsaveDealController(req: Request, res: Response) {
   const userId = requireUserId(req);
   const dealId = req.params.id;
+  // Consider a different response format (see below)
   // 204: Send 'No content' response to indicate successful deletion
-  // This response differs from deal deletion - choose one approach later)
-  // Alternatively, 200: include deleted savedDeal content
+  // Alternatively, 200: include deleted savedDeal content (this is the current response for deal deletion)
+  //  return res.status(200).json(deleted);
   try {
     const deleted = await unsaveDeal(userId, dealId);
     if (!deleted) {
       return res.status(404).json({ error: "Saved deal not found" });
     }
-    // return res.status(200).json(deleted);
     return res.status(204).send();
   } catch /*(error: unknown)*/ {
-    return res.status(500).json({ error: "Error unsaving deal" }); // TODO: See above TODO
+    // TODO: More detailed error handling
+    return res.status(500).json({ error: "Error unsaving deal" });
   }
 }

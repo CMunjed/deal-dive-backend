@@ -9,6 +9,8 @@ import {
 import { requireUserId } from "../middleware/auth-middleware.js";
 
 // TODO: Consider moving this helper function somewhere else
+// or standardizing error handling for all controllers/services with a
+// custom class extending the Error class that stores the desired HTTP error code.
 const handleError = (res: Response, error: unknown) => {
   if (error instanceof Error) {
     if (error.message === "Deal not found") {
@@ -20,6 +22,7 @@ const handleError = (res: Response, error: unknown) => {
   return res.status(500).json({ error: "Unexpected error" });
 };
 
+// POST /api/v1/deals
 export async function createDealController(req: Request, res: Response) {
   const userId = requireUserId(req);
   const dealData = req.body;
@@ -31,6 +34,7 @@ export async function createDealController(req: Request, res: Response) {
   }
 }
 
+// GET /api/v1/deals/:id
 export async function getDealController(req: Request, res: Response) {
   const dealId = req.params.id;
   try {
@@ -41,6 +45,7 @@ export async function getDealController(req: Request, res: Response) {
   }
 }
 
+// GET /api/v1/deals
 export async function getDealsController(req: Request, res: Response) {
   // TODO: Modify this to accept more query parameters as added
   const { userId } = req.query;
@@ -52,6 +57,8 @@ export async function getDealsController(req: Request, res: Response) {
   }
 }
 
+// PUT /api/v1/deals
+// TODO: Require auth
 export async function updateDealController(req: Request, res: Response) {
   const dealId = req.params.id;
   const updates = req.body;
@@ -63,6 +70,8 @@ export async function updateDealController(req: Request, res: Response) {
   }
 }
 
+// DELETE /api/v1/deals
+// TODO: Require auth
 export async function deleteDealController(req: Request, res: Response) {
   const dealId = req.params.id;
   try {

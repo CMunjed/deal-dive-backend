@@ -24,7 +24,7 @@ describe("Deal Service Tests", () => {
     if (tempDealId) await cleanupDeal(tempDealId);
   });
 
-  // createDeal test
+  // createDeal tests
   describe("createDeal", () => {
     it("Create a new deal", async () => {
       const deal = await createTestDeal(TEST_USER_ID, {
@@ -39,7 +39,7 @@ describe("Deal Service Tests", () => {
     });
   });
 
-  // getDeal test
+  // getDeal tests
   describe("getDeal", () => {
     it("Fetch a deal by ID", async () => {
       const fetched = await getDeal(tempDealId);
@@ -66,6 +66,7 @@ describe("Deal Service Tests", () => {
     });
   });
 
+  // updateDeal tests
   describe("updateDeal", () => {
     it("Update a deal's title and return the updated deal", async () => {
       const newTitle = "Updated";
@@ -86,6 +87,7 @@ describe("Deal Service Tests", () => {
     });
   });
 
+  // deleteDeal tests
   describe("deleteDeal", () => {
     let dealToDeleteId: string;
 

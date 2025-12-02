@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getAllCategories } from "../services/categories.service.js";
 
+// GET /api/v1/categories
 export async function getAllCategoriesController(_req: Request, res: Response) {
   try {
     const categories = await getAllCategories();

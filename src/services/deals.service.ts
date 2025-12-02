@@ -44,6 +44,7 @@ export async function createDeal(
 }
 
 // Get one deal by ID
+// TODO: Incorporate existing fetchDealsWithRelations helper
 export async function getDeal(
   dealId: string,
 ): Promise<Deal & { tags: string[]; categories: string[] }> {
@@ -71,6 +72,7 @@ export async function getDeal(
 }
 
 // Get multiple deals - currently, either get all deals, or filter by user id
+// TODO: Incorporate existing fetchDealsWithRelations helper
 export async function getDeals(
   userId?: string,
 ): Promise<(Deal & { tags: string[]; categories: string[] })[]> {
@@ -152,5 +154,5 @@ export async function deleteDeal(dealId: string): Promise<Deal> {
   const { error } = await supabase.from("deals").delete().eq("id", dealId);
   if (error) throw error;
 
-  return deal; // Useful in assertions in tests
+  return deal; // Useful for assertions in tests
 }

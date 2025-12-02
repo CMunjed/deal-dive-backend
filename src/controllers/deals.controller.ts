@@ -8,8 +8,8 @@ import {
 } from "../services/deals.service.js";
 import { requireUserId } from "../middleware/auth-middleware.js";
 
-// TODO: Consider moving this helper function somewhere else 
-// or standardizing error handling for all controllers/services with a 
+// TODO: Consider moving this helper function somewhere else
+// or standardizing error handling for all controllers/services with a
 // custom class extending the Error class that stores the desired HTTP error code.
 const handleError = (res: Response, error: unknown) => {
   if (error instanceof Error) {

@@ -23,8 +23,8 @@ interface FetchDealsOptions {
 export async function fetchDealsWithRelations(
   options: FetchDealsOptions = {},
 ): Promise<(Deal & { tags: string[]; categories: string[] })[]> {
-  // Join deals w/ deal_tags and deal_categories on deal.id, 
-  // join deal_tags w/ tags and deal_categories w/ categories 
+  // Join deals w/ deal_tags and deal_categories on deal.id,
+  // join deal_tags w/ tags and deal_categories w/ categories
   // on tag.id and category.id, then select the name_lower field from each
   let query = supabase.from("deals").select(`
       *,

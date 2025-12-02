@@ -13,9 +13,9 @@ Deal Dive is a crowdsourced, location-based platform designed to help college st
 - **Community Engagement**:
   - Upvote and downvote deals to highlight popular and user-validated deals
   - Comment on deals to share experiences and information
-  - Report innacurate or misleading deals
-- **User Authentication**: Secure user registration, login, and persistance
-- **Deal Categorization**: Filter by catagory or tag to find specific deals
+  - Report inaccurate or misleading deals
+- **User Authentication**: Secure user registration, login, and persistence
+- **Deal Categorization**: Filter by category or tag to find specific deals
 
 ## Technology Stack
 
